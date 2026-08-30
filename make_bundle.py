@@ -16,6 +16,9 @@ def build():
     with open('rl_agent.py', 'r', encoding='utf-8') as f:
         rl_py = f.read()
 
+    with open('edf.py', 'r', encoding='utf-8') as f:
+        edf_py = f.read()
+
     starter_py = """def agent(obs):
     farms = obs.get("farms", [])
     player = obs.get("player", 0)
@@ -87,6 +90,7 @@ def agent(obs):
 """
 
     presets = {
+        'edf': edf_py,
         'rl': rl_py,
         'main': main_py,
         'abc': abc_py,

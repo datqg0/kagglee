@@ -97,13 +97,19 @@
 
   function loadPresetsIntoUI() {
     const presets = window.AGENT_PRESETS || {};
-    if (presets.rl) {
+    if (presets.edf) {
+      elP0Code.value = presets.edf;
+      elP0Name.value = 'Expert Framework (1000 Rules)';
+    } else if (presets.rl) {
       elP0Code.value = presets.rl;
       elP0Name.value = 'Hierarchical RL Agent (Top $95k)';
     } else if (presets.main) {
       elP0Code.value = presets.main;
     }
-    if (presets.main) {
+    if (presets.rl) {
+      elP1Code.value = presets.rl;
+      elP1Name.value = 'Hierarchical RL Agent (Top $95k)';
+    } else if (presets.main) {
       elP1Code.value = presets.main;
       elP1Name.value = 'Grandmaster Agent';
     } else if (presets.starter) {
@@ -215,7 +221,8 @@
       elFilename.textContent = '';
       if (presets[val]) {
         elCode.value = presets[val];
-        if (val === 'rl') elName.value = 'Hierarchical RL Agent (Top $95k)';
+        if (val === 'edf') elName.value = 'Expert Framework (1000 Rules)';
+        else if (val === 'rl') elName.value = 'Hierarchical RL Agent (Top $95k)';
         else if (val === 'main') elName.value = 'Grandmaster Agent';
         else if (val === 'abc') elName.value = 'Adaptive Liquidation Agent';
         else if (val === 'starter') elName.value = 'Starter Baseline';
