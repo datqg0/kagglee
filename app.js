@@ -195,7 +195,7 @@
     // Fullscreen Toggle
     elBtnFullscreen.addEventListener('click', () => {
       elVisFrameContainer.classList.toggle('fullscreen');
-      elBtnFullscreen.textContent = elVisFrameContainer.classList.contains('fullscreen') ? '✕ Thu nhỏ' : '⛶ Toàn màn hình';
+      elBtnFullscreen.textContent = elVisFrameContainer.classList.contains('fullscreen') ? '✕ Exit Fullscreen' : '⛶ Fullscreen';
     });
   }
 
@@ -262,11 +262,11 @@
     const agent1Code = elP1Code.value.trim();
 
     if (!agent0Code) {
-      alert('Vui lòng chọn hoặc nhập mã nguồn cho Player 0!');
+      alert('Please select or provide Python code for Player 0!');
       return;
     }
     if (!agent1Code) {
-      alert('Vui lòng chọn hoặc nhập mã nguồn cho Player 1!');
+      alert('Please select or provide Python code for Player 1!');
       return;
     }
 
@@ -277,12 +277,12 @@
 
     isSimulating = true;
     elBtnStart.disabled = true;
-    elBtnStart.innerHTML = '<span class="spinner"></span> ĐANG MÔ PHỎNG...';
+    elBtnStart.innerHTML = '<span class="spinner"></span> SIMULATING...';
 
     // Show Progress
     elProgressCard.style.display = 'block';
     elProgressBar.style.width = '0%';
-    elProgressStatusText.textContent = 'Đang khởi chạy mô phỏng Kaggriculture...';
+    elProgressStatusText.textContent = 'Initializing Kaggriculture simulation...';
     elPreviewP0Name.textContent = p0Name;
     elPreviewP1Name.textContent = p1Name;
     elPreviewP0Money.textContent = '$3,000';
@@ -305,19 +305,19 @@
 
   function handleProgressUpdate(data) {
     elProgressBar.style.width = data.percent + '%';
-    elProgressDayTag.textContent = `Ngày ${String(data.day).padStart(2, '0')}/30`;
+    elProgressDayTag.textContent = `Day ${String(data.day).padStart(2, '0')}/30`;
     elProgressTurnTag.textContent = `Turn ${data.step}/${data.total}`;
     elPreviewP0Money.textContent = '$' + Math.round(data.m0).toLocaleString();
     elPreviewP1Money.textContent = '$' + Math.round(data.m1).toLocaleString();
-    elProgressStatusText.textContent = `Mô phỏng ngày ${data.day} (${data.percent}%)...`;
+    elProgressStatusText.textContent = `Simulating Day ${data.day} (${data.percent}%)...`;
   }
 
   function handleMatchComplete(result) {
     isSimulating = false;
     elBtnStart.disabled = false;
-    elBtnStart.innerHTML = '<span class="btn-icon-play">⚔️</span> BẮT ĐẦU ĐẤU (SIMULATE)';
+    elBtnStart.innerHTML = '<span class="btn-icon-play">⚔️</span> START BATTLE (SIMULATE)';
     elProgressBar.style.width = '100%';
-    elProgressStatusText.textContent = 'Trận đấu hoàn tất!';
+    elProgressStatusText.textContent = 'Match simulation complete!';
 
     currentSummary = result.summary;
     currentReplay = result.replay;
@@ -332,9 +332,9 @@
   function handleMatchError(error) {
     isSimulating = false;
     elBtnStart.disabled = false;
-    elBtnStart.innerHTML = '<span class="btn-icon-play">⚔️</span> BẮT ĐẦU ĐẤU (SIMULATE)';
+    elBtnStart.innerHTML = '<span class="btn-icon-play">⚔️</span> START BATTLE (SIMULATE)';
     elProgressCard.style.display = 'none';
-    alert('Lỗi mô phỏng: ' + error);
+    alert('Simulation error: ' + error);
   }
 
   // --- DISPLAY RESULTS & ANALYTICS ---
@@ -346,14 +346,14 @@
 
     // Winner Banner
     if (summary.winner === 'P0') {
-      elWinnerTitle.textContent = `🎉 ${p0.name} Chiến Thắng!`;
-      elWinnerMargin.textContent = `Chênh lệch: +$${Math.round(summary.difference).toLocaleString()} vàng • Thời gian tính toán: ${summary.execution_time_sec}s`;
+      elWinnerTitle.textContent = `🎉 ${p0.name} Victorious!`;
+      elWinnerMargin.textContent = `Margin: +$${Math.round(summary.difference).toLocaleString()} gold • Runtime: ${summary.execution_time_sec}s`;
     } else if (summary.winner === 'P1') {
-      elWinnerTitle.textContent = `🎉 ${p1.name} Chiến Thắng!`;
-      elWinnerMargin.textContent = `Chênh lệch: +$${Math.round(summary.difference).toLocaleString()} vàng • Thời gian tính toán: ${summary.execution_time_sec}s`;
+      elWinnerTitle.textContent = `🎉 ${p1.name} Victorious!`;
+      elWinnerMargin.textContent = `Margin: +$${Math.round(summary.difference).toLocaleString()} gold • Runtime: ${summary.execution_time_sec}s`;
     } else {
-      elWinnerTitle.textContent = `🤝 Kết Quả Hòa!`;
-      elWinnerMargin.textContent = `Cả 2 cùng đạt $${Math.round(p0.final_money).toLocaleString()} vàng`;
+      elWinnerTitle.textContent = `🤝 Draw Match!`;
+      elWinnerMargin.textContent = `Both players tied at $${Math.round(p0.final_money).toLocaleString()} gold`;
     }
 
     elResP0Label.textContent = `P0 (${p0.name})`;
@@ -383,8 +383,8 @@
     elStatP0Hires.textContent = p0.stats.hires.toLocaleString();
     elStatP1Hires.textContent = p1.stats.hires.toLocaleString();
 
-    elStatP0Errors.textContent = p0.errors.length > 0 ? `${p0.errors.length} lỗi` : '0';
-    elStatP1Errors.textContent = p1.errors.length > 0 ? `${p1.errors.length} lỗi` : '0';
+    elStatP0Errors.textContent = p0.errors.length > 0 ? `${p0.errors.length} error(s)` : '0';
+    elStatP1Errors.textContent = p1.errors.length > 0 ? `${p1.errors.length} error(s)` : '0';
 
     // Draw Wealth Timeline
     drawWealthChart(summary.timeline, p0.name, p1.name);
@@ -522,7 +522,7 @@
   // --- REPLAY EXPORT & IMPORT ---
   function downloadReplayHtml() {
     if (!currentReplay) {
-      alert('Chưa có dữ liệu trận đấu để tải về!');
+      alert('No match data available to download!');
       return;
     }
 
@@ -543,7 +543,7 @@
 
   function downloadReplayJson() {
     if (!currentReplay) {
-      alert('Chưa có dữ liệu trận đấu để tải về!');
+      alert('No match data available to download!');
       return;
     }
 
@@ -576,7 +576,7 @@
           if (match && match[1]) {
             replayData = JSON.parse(match[1]);
           } else {
-            throw new Error('Không tìm thấy dữ liệu replay trong file HTML');
+            throw new Error('No replay data found in HTML file');
           }
         }
 
@@ -584,10 +584,10 @@
           currentReplay = replayData;
           renderVisualizer(replayData);
           elVisCard.scrollIntoView({ behavior: 'smooth' });
-          alert(`Đã tải thành công replay: ${file.name}`);
+          alert(`Successfully loaded replay: ${file.name}`);
         }
       } catch (err) {
-        alert('Lỗi đọc file replay: ' + err.message);
+        alert('Error reading replay file: ' + err.message);
       }
     };
     reader.readAsText(file);

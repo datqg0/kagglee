@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -25,11 +25,11 @@
           <span class="status-dot"></span>
           <span class="status-label">Python Ready</span>
         </div>
-        <button class="btn btn-secondary btn-sm" id="btn-load-replay" title="Tải file replay .json hoặc .html để xem lại">
+        <button class="btn btn-secondary btn-sm" id="btn-load-replay" title="Load an existing .json or .html replay file">
           📂 Load Replay
         </button>
         <input type="file" id="replay-file-input" accept=".json,.html" style="display: none;" />
-        <a href="#rules-section" class="btn btn-icon btn-sm" title="Luật chơi Kaggriculture">📜</a>
+        <a href="#rules-section" class="btn btn-icon btn-sm" title="Kaggriculture Game Rules">📜</a>
       </div>
     </header>
 
@@ -37,7 +37,7 @@
       <!-- HERO MATCH SETUP ARENA -->
       <section class="arena-section card">
         <div class="section-header">
-          <h2>⚔️ Thiết Lập Trận Đấu (Head-to-Head Arena)</h2>
+          <h2>⚔️ Match Setup (Head-to-Head Arena)</h2>
           <span class="badge badge-accent">720 Turns • 30 Days Simulation</span>
         </div>
 
@@ -47,21 +47,21 @@
             <div class="player-card-header">
               <div class="player-tag">
                 <span class="player-badge p0-badge">P0</span>
-                <input type="text" id="p0-name" class="player-name-input" value="Grandmaster Agent" placeholder="Tên Player 1" />
+                <input type="text" id="p0-name" class="player-name-input" value="Grandmaster Agent" placeholder="Player 1 Name" />
               </div>
               <span class="role-pill">Farmer Blue</span>
             </div>
 
             <div class="agent-source-select">
-              <label>Chiến thuật / Agent:</label>
+              <label>Strategy / Agent:</label>
               <select id="p0-preset" class="form-select">
                 <option value="main">🌟 main.py (Melon Surge + GM Strawberry)</option>
                 <option value="abc">⚡ abc.py (Adaptive Market Liquidation)</option>
                 <option value="starter">🥕 starter.py (Deterministic Carrot Loop)</option>
                 <option value="random">🎲 random.py (Random Exploration)</option>
-                <option value="pass">🛑 pass.py (No Action)</option>
-                <option value="upload">📁 Tải lên file .py của bạn...</option>
-                <option value="custom">✏️ Soạn thảo code trực tiếp...</option>
+                <option value="pass">🛑 pass.py (No Action / Pass)</option>
+                <option value="upload">📁 Upload custom .py file...</option>
+                <option value="custom">✏️ Write Python code directly...</option>
               </select>
             </div>
 
@@ -70,7 +70,7 @@
               <input type="file" id="p0-file-input" accept=".py" style="display: none;" />
               <div class="upload-prompt" id="p0-upload-prompt">
                 <span class="upload-icon">📄</span>
-                <p>Kéo thả file <code>agent.py</code> vào đây hoặc <strong>click để chọn</strong></p>
+                <p>Drag & drop <code>agent.py</code> here or <strong>click to browse</strong></p>
                 <span class="file-name" id="p0-filename"></span>
               </div>
             </div>
@@ -78,8 +78,8 @@
             <!-- Code Editor / Preview Box -->
             <div class="code-container">
               <div class="code-header">
-                <span>Mã nguồn Python</span>
-                <button class="btn-text" id="p0-toggle-editor">Chỉnh sửa</button>
+                <span>Python Source Code</span>
+                <button class="btn-text" id="p0-toggle-editor">Edit Code</button>
               </div>
               <textarea id="p0-code" class="code-editor" spellcheck="false" placeholder="def agent(obs): ..."></textarea>
             </div>
@@ -91,28 +91,28 @@
 
             <div class="match-config-panel">
               <div class="config-item">
-                <label for="match-seed">Seed ngẫu nhiên:</label>
+                <label for="match-seed">Random Seed:</label>
                 <div class="input-with-btn">
                   <input type="number" id="match-seed" class="form-input" value="42" placeholder="42" />
-                  <button class="btn btn-icon btn-secondary" id="btn-random-seed" title="Đổi seed ngẫu nhiên">🎲</button>
+                  <button class="btn btn-icon btn-secondary" id="btn-random-seed" title="Randomize seed">🎲</button>
                 </div>
               </div>
 
               <div class="config-item">
-                <label for="match-turns">Số lượt (Turns):</label>
+                <label for="match-turns">Match Duration:</label>
                 <select id="match-turns" class="form-select">
-                  <option value="720" selected>720 lượt (30 ngày chuẩn Kaggle)</option>
-                  <option value="240">240 lượt (10 ngày test nhanh)</option>
-                  <option value="480">480 lượt (20 ngày)</option>
+                  <option value="720" selected>720 turns (30 days - Official Kaggle)</option>
+                  <option value="240">240 turns (10 days - Quick test)</option>
+                  <option value="480">480 turns (20 days)</option>
                 </select>
               </div>
             </div>
 
             <button class="btn btn-primary btn-glow btn-lg" id="btn-start-match">
-              <span class="btn-icon-play">⚔️</span> BẮT ĐẦU ĐẤU (SIMULATE)
+              <span class="btn-icon-play">⚔️</span> START BATTLE (SIMULATE)
             </button>
 
-            <div class="hint-text">Chạy 100% trong trình duyệt qua WebAssembly</div>
+            <div class="hint-text">Runs 100% in-browser via Pyodide WebAssembly</div>
           </div>
 
           <!-- PLAYER 1 CARD -->
@@ -120,21 +120,21 @@
             <div class="player-card-header">
               <div class="player-tag">
                 <span class="player-badge p1-badge">P1</span>
-                <input type="text" id="p1-name" class="player-name-input" value="Starter Baseline" placeholder="Tên Player 2" />
+                <input type="text" id="p1-name" class="player-name-input" value="Starter Baseline" placeholder="Player 2 Name" />
               </div>
               <span class="role-pill">Farmer Red</span>
             </div>
 
             <div class="agent-source-select">
-              <label>Chiến thuật / Agent:</label>
+              <label>Strategy / Agent:</label>
               <select id="p1-preset" class="form-select">
                 <option value="starter" selected>🥕 starter.py (Deterministic Carrot Loop)</option>
                 <option value="main">🌟 main.py (Melon Surge + GM Strawberry)</option>
                 <option value="abc">⚡ abc.py (Adaptive Market Liquidation)</option>
                 <option value="random">🎲 random.py (Random Exploration)</option>
-                <option value="pass">🛑 pass.py (No Action)</option>
-                <option value="upload">📁 Tải lên file .py của bạn...</option>
-                <option value="custom">✏️ Soạn thảo code trực tiếp...</option>
+                <option value="pass">🛑 pass.py (No Action / Pass)</option>
+                <option value="upload">📁 Upload custom .py file...</option>
+                <option value="custom">✏️ Write Python code directly...</option>
               </select>
             </div>
 
@@ -143,7 +143,7 @@
               <input type="file" id="p1-file-input" accept=".py" style="display: none;" />
               <div class="upload-prompt" id="p1-upload-prompt">
                 <span class="upload-icon">📄</span>
-                <p>Kéo thả file <code>agent.py</code> vào đây hoặc <strong>click để chọn</strong></p>
+                <p>Drag & drop <code>agent.py</code> here or <strong>click to browse</strong></p>
                 <span class="file-name" id="p1-filename"></span>
               </div>
             </div>
@@ -151,8 +151,8 @@
             <!-- Code Editor / Preview Box -->
             <div class="code-container">
               <div class="code-header">
-                <span>Mã nguồn Python</span>
-                <button class="btn-text" id="p1-toggle-editor">Chỉnh sửa</button>
+                <span>Python Source Code</span>
+                <button class="btn-text" id="p1-toggle-editor">Edit Code</button>
               </div>
               <textarea id="p1-code" class="code-editor" spellcheck="false" placeholder="def agent(obs): ..."></textarea>
             </div>
@@ -165,10 +165,10 @@
         <div class="progress-header">
           <div class="progress-title">
             <span class="spinner"></span>
-            <span id="progress-status-text">Đang mô phỏng trận đấu...</span>
+            <span id="progress-status-text">Simulating match...</span>
           </div>
           <div class="progress-stats">
-            <span id="progress-day-tag" class="badge badge-primary">Ngày 01/30</span>
+            <span id="progress-day-tag" class="badge badge-primary">Day 01/30</span>
             <span id="progress-turn-tag" class="badge badge-neutral">Turn 1/720</span>
           </div>
         </div>
@@ -190,9 +190,9 @@
         <div class="winner-banner" id="winner-banner">
           <div class="winner-trophy">🏆</div>
           <div class="winner-details">
-            <span class="winner-subtitle">KẾT QUẢ TRẬN ĐẤU</span>
-            <h2 class="winner-name" id="winner-title">Player 1 Chiến Thắng!</h2>
-            <p class="winner-margin" id="winner-margin">Chênh lệch: +$73,939 vàng • Thời gian chạy: 1.5s</p>
+            <span class="winner-subtitle">MATCH RESULT</span>
+            <h2 class="winner-name" id="winner-title">Player 1 Victorious!</h2>
+            <p class="winner-margin" id="winner-margin">Margin: +$73,939 gold • Runtime: 1.5s</p>
           </div>
           <div class="winner-scores">
             <div class="final-score-box p0-score-box">
@@ -211,7 +211,7 @@
         <div class="analytics-grid">
           <div class="chart-container">
             <div class="chart-header">
-              <h3>📈 Biểu Đồ Tăng Trưởng Tài Sản (30 Ngày)</h3>
+              <h3>📈 Wealth Growth Timeline (30 Days)</h3>
               <div class="chart-legend">
                 <span class="legend-item"><span class="legend-dot p0-dot"></span> <span id="legend-p0-name">P0</span></span>
                 <span class="legend-item"><span class="legend-dot p1-dot"></span> <span id="legend-p1-name">P1</span></span>
@@ -222,43 +222,43 @@
 
           <!-- STATS BREAKDOWN -->
           <div class="stats-breakdown">
-            <h3>📊 Thống Kê Chi Tiết</h3>
+            <h3>📊 Match Statistics Breakdown</h3>
             <table class="stats-table">
               <thead>
                 <tr>
-                  <th>Chỉ Số</th>
+                  <th>Metric</th>
                   <th id="th-p0">Player 0</th>
                   <th id="th-p1">Player 1</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td>💰 Tiền kết thúc</td>
+                  <td>💰 Final Balance</td>
                   <td id="stat-p0-money" class="text-p0 font-bold">$0</td>
                   <td id="stat-p1-money" class="text-p1 font-bold">$0</td>
                 </tr>
                 <tr>
-                  <td>🗺️ Đất đã mở (Quadrant)</td>
+                  <td>🗺️ Quadrants Unlocked</td>
                   <td id="stat-p0-quads">1 / 4</td>
                   <td id="stat-p1-quads">1 / 4</td>
                 </tr>
                 <tr>
-                  <td>🌾 Số lượt thu hoạch</td>
+                  <td>🌾 Total Harvests</td>
                   <td id="stat-p0-harvests">0</td>
                   <td id="stat-p1-harvests">0</td>
                 </tr>
                 <tr>
-                  <td>🛒 Lệnh thị trường (Orders)</td>
+                  <td>🛒 Market Orders Placed</td>
                   <td id="stat-p0-orders">0</td>
                   <td id="stat-p1-orders">0</td>
                 </tr>
                 <tr>
-                  <td>🧑‍🌾 Số lượt thuê Farmhand</td>
+                  <td>🧑‍🌾 Farmhands Hired</td>
                   <td id="stat-p0-hires">0</td>
                   <td id="stat-p1-hires">0</td>
                 </tr>
                 <tr>
-                  <td>⚠️ Lỗi / No-op Exception</td>
+                  <td>⚠️ Runtime Exceptions / Errors</td>
                   <td id="stat-p0-errors">0</td>
                   <td id="stat-p1-errors">0</td>
                 </tr>
@@ -272,18 +272,18 @@
       <section class="visualizer-section card" id="visualizer-card" style="display: none;">
         <div class="section-header visualizer-toolbar">
           <div class="toolbar-left">
-            <h2>🎮 Trình Xem Trận Đấu (Interactive Match Replay)</h2>
+            <h2>🎮 Interactive Match Replay</h2>
             <span class="badge badge-neutral" id="vis-seed-badge">Seed: 42</span>
           </div>
           <div class="toolbar-right">
-            <button class="btn btn-secondary btn-sm" id="btn-download-html" title="Tải file HTML xem offline bất cứ lúc nào">
-              📥 Tải Replay HTML
+            <button class="btn btn-secondary btn-sm" id="btn-download-html" title="Download standalone HTML to view offline anytime">
+              📥 Download HTML Replay
             </button>
-            <button class="btn btn-secondary btn-sm" id="btn-download-json" title="Tải file Replay JSON">
-              💾 Tải Replay JSON
+            <button class="btn btn-secondary btn-sm" id="btn-download-json" title="Download raw Replay JSON">
+              💾 Download Replay JSON
             </button>
-            <button class="btn btn-secondary btn-sm" id="btn-fullscreen" title="Phóng to toàn màn hình">
-              ⛶ Toàn màn hình
+            <button class="btn btn-secondary btn-sm" id="btn-fullscreen" title="Toggle Fullscreen view">
+              ⛶ Fullscreen
             </button>
           </div>
         </div>
@@ -296,42 +296,42 @@
       <!-- RULES & CHEATSHEET SECTION -->
       <section class="rules-section card" id="rules-section">
         <div class="section-header">
-          <h2>📖 Tóm Tắt Luật Chơi & Cơ Chế Kaggriculture</h2>
+          <h2>📖 Kaggriculture Rules & Gameplay Cheatsheet</h2>
         </div>
         <div class="rules-grid">
           <div class="rule-card">
-            <h4>🌱 Cây Trồng (Crops)</h4>
+            <h4>🌱 Crops</h4>
             <ul>
-              <li><strong>Wheat ($10):</strong> Ngày 2-4, bonus window days 2-4. Thức ăn cho gia súc.</li>
-              <li><strong>Carrot ($20):</strong> Ngày 2-3, hoàn vốn nhanh ngày đầu.</li>
-              <li><strong>Tomato ($50):</strong> Ngày 8+, lặp lại mỗi 1 ngày, Ongoing.</li>
-              <li><strong>Strawberry ($100):</strong> Ngày 10+, lặp lại mỗi 2 ngày, siêu lợi nhuận.</li>
-              <li><strong>Melon ($80):</strong> Ngày 10-12, quả đơn lẻ giá cao ($250).</li>
+              <li><strong>Wheat ($10):</strong> Harvest days 2-4, bonus watering days 2-4. Feed for livestock.</li>
+              <li><strong>Carrot ($20):</strong> Harvest days 2-3, fast early game capital.</li>
+              <li><strong>Tomato ($50):</strong> Day 8+, repeatable every 1 turn, Ongoing crop.</li>
+              <li><strong>Strawberry ($100):</strong> Day 10+, repeatable every 2 turns, high revenue factory.</li>
+              <li><strong>Melon ($80):</strong> Days 10-12, single large harvest with high base value ($250).</li>
             </ul>
           </div>
           <div class="rule-card">
-            <h4>🐄 Động Vật (Animals)</h4>
+            <h4>🐄 Livestock & Animals</h4>
             <ul>
-              <li><strong>Goose ($300):</strong> Chuồng COOP, đẻ Trứng (Egg) mỗi ngày.</li>
-              <li><strong>Cow ($400):</strong> Chuồng PASTURE, cho Sữa (Milk) mỗi 2 ngày.</li>
-              <li><strong>Sheep ($500):</strong> Chuồng PASTURE, cho Len (Wool) mỗi 3 ngày.</li>
-              <li>Phải cho ăn Wheat hàng ngày. Lệnh <code>CARE</code> tăng sản lượng.</li>
+              <li><strong>Goose ($300):</strong> Requires COOP structure, produces Eggs daily.</li>
+              <li><strong>Cow ($400):</strong> Requires PASTURE structure, produces Milk every 2 days.</li>
+              <li><strong>Sheep ($500):</strong> Requires PASTURE structure, produces Wool every 3 days.</li>
+              <li>Must be fed Wheat daily. <code>CARE</code> banks +1 product bonus per fed day.</li>
             </ul>
           </div>
           <div class="rule-card">
-            <h4>🗺️ Đất & Farmhand</h4>
+            <h4>🗺️ Farmland & Farmhands</h4>
             <ul>
-              <li>4 Quadrant 5x5: Khởi đầu mở NW. Mua NE ($1k), SW ($2k), SE ($4k).</li>
-              <li>Thuê Farmhand theo Fibonacci ($1, 1, 2, 3, 5, 8...). Reset mỗi ngày.</li>
-              <li>Shed chứa tối đa 100 sản phẩm. Đứng tại (4,4), (5,4), (4,5), (5,5) để tương tác kho.</li>
+              <li>Four 5x5 quadrants: Starts with NW unlocked. Buy NE ($1k), SW ($2k), SE ($4k).</li>
+              <li>Hire Farmhands via Fibonacci costs ($1, 1, 2, 3, 5, 8...). Resets daily.</li>
+              <li>Shed holds max 100 items. Stand at (4,4), (5,4), (4,5), (5,5) for center storage.</li>
             </ul>
           </div>
           <div class="rule-card">
-            <h4>📈 Thị Trường & Town</h4>
+            <h4>📈 Market Dynamics & Town</h4>
             <ul>
-              <li>Giá biến động theo cung cầu. Bán nhiều giá giảm sàn ($1).</li>
-              <li>Town Center & Các Shop mở định kỳ tạo sức mua lớn.</li>
-              <li>Bán từ từ (Drip Sell) giữ giá cao và xả toàn bộ cuối mùa (Day 28-29).</li>
+              <li>Sale prices fluctuate with supply and demand. Oversupply drives prices to $1 floor.</li>
+              <li>Town Center & unlocking Town Shops create continuous consumption demand.</li>
+              <li>Drip sell harvested goods steadily, and liquidate 100% on days 28-29.</li>
             </ul>
           </div>
         </div>
@@ -339,7 +339,7 @@
     </main>
 
     <footer class="app-footer">
-      <p>Kaggriculture Web Arena • Sẵn sàng Deploy trên <strong>Vercel</strong> với 0 cấu hình • Powered by Pyodide WebAssembly</p>
+      <p>Kaggriculture Web Arena • Ready to Deploy on <strong>Vercel</strong> with zero config • Powered by Pyodide WebAssembly</p>
     </footer>
   </div>
 
