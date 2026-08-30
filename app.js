@@ -290,6 +290,8 @@
 
     simWorker.postMessage({
       type: 'RUN_MATCH',
+      enginePy: window.KAGGRICULTURE_ENGINE_PY || '',
+      runnerPy: window.RUNNER_CORE_PY || '',
       agent0Code,
       agent1Code,
       agent0Name: p0Name,

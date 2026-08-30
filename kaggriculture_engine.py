@@ -1010,16 +1010,10 @@ def renderer(state, env):
     return out
 
 
-json_path = path.abspath(path.join(dirpath, "kaggriculture.json"))
-with open(json_path) as json_file:
-    specification = json.load(json_file)
+specification = {}
 
 
 def html_renderer(env, mode):
-    jspath = path.join(dirpath, "visualizer", "default", "dist", "index.html")
-    if path.exists(jspath):
-        with open(jspath, encoding="utf-8") as f:
-            return f.read()
     return ""
 
 
