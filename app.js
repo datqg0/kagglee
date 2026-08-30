@@ -97,7 +97,10 @@
 
   function loadPresetsIntoUI() {
     const presets = window.AGENT_PRESETS || {};
-    if (presets.edf) {
+    if (presets.miss) {
+      elP0Code.value = presets.miss;
+      elP0Name.value = 'Neuro-Symbolic Agent (1000 Rules + RL)';
+    } else if (presets.edf) {
       elP0Code.value = presets.edf;
       elP0Name.value = 'Expert Framework (1000 Rules)';
     } else if (presets.rl) {
@@ -221,7 +224,8 @@
       elFilename.textContent = '';
       if (presets[val]) {
         elCode.value = presets[val];
-        if (val === 'edf') elName.value = 'Expert Framework (1000 Rules)';
+        if (val === 'miss') elName.value = 'Neuro-Symbolic Agent (1000 Rules + RL)';
+        else if (val === 'edf') elName.value = 'Expert Framework (1000 Rules)';
         else if (val === 'rl') elName.value = 'Hierarchical RL Agent (Top $95k)';
         else if (val === 'main') elName.value = 'Grandmaster Agent';
         else if (val === 'abc') elName.value = 'Adaptive Liquidation Agent';

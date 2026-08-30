@@ -19,6 +19,9 @@ def build():
     with open('edf.py', 'r', encoding='utf-8') as f:
         edf_py = f.read()
 
+    with open('miss.py', 'r', encoding='utf-8') as f:
+        miss_py = f.read()
+
     starter_py = """def agent(obs):
     farms = obs.get("farms", [])
     player = obs.get("player", 0)
@@ -90,6 +93,7 @@ def agent(obs):
 """
 
     presets = {
+        'miss': miss_py,
         'edf': edf_py,
         'rl': rl_py,
         'main': main_py,
