@@ -34,6 +34,12 @@ def build():
     except Exception:
         submission_py = main_py
 
+    try:
+        with open('dg.py', 'r', encoding='utf-8') as f:
+            dg_py = f.read()
+    except Exception:
+        dg_py = edf_py
+
     starter_py = """def agent(obs):
     farms = obs.get("farms", [])
     player = obs.get("player", 0)
@@ -105,6 +111,7 @@ def agent(obs):
 """
 
     presets = {
+        'dg': dg_py,
         'submission': submission_py,
         'rlv2': rlv2_py,
         'miss': miss_py,

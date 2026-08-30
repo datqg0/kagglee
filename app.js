@@ -97,7 +97,10 @@
 
   function loadPresetsIntoUI() {
     const presets = window.AGENT_PRESETS || {};
-    if (presets.rlv2) {
+    if (presets.dg) {
+      elP0Code.value = presets.dg;
+      elP0Name.value = 'Deep Grandmaster (2500 Rules)';
+    } else if (presets.rlv2) {
       elP0Code.value = presets.rlv2;
       elP0Name.value = 'RL Policy V2 (Multi-Opponent)';
     } else if (presets.miss) {
@@ -112,7 +115,10 @@
     } else if (presets.main) {
       elP0Code.value = presets.main;
     }
-    if (presets.miss) {
+    if (presets.submission) {
+      elP1Code.value = presets.submission;
+      elP1Name.value = 'Kaggle Submission Agent';
+    } else if (presets.miss) {
       elP1Code.value = presets.miss;
       elP1Name.value = 'Neuro-Symbolic Agent (1000 Rules + RL)';
     } else if (presets.rlv2) {
@@ -230,7 +236,8 @@
       elFilename.textContent = '';
       if (presets[val]) {
         elCode.value = presets[val];
-        if (val === 'submission') elName.value = 'Kaggle Submission Agent';
+        if (val === 'dg') elName.value = 'Deep Grandmaster (2500 Rules)';
+        else if (val === 'submission') elName.value = 'Kaggle Submission Agent';
         else if (val === 'rlv2') elName.value = 'RL Policy V2 (Multi-Opponent)';
         else if (val === 'miss') elName.value = 'Neuro-Symbolic Agent (1000 Rules + RL)';
         else if (val === 'edf') elName.value = 'Expert Framework (1000 Rules)';
