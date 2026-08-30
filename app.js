@@ -473,19 +473,48 @@
     drawLine('p1_money', '#f85149', 'rgba(248, 81, 73, 0.4)');
   }
 
+  function buildKagglePayload(replayData) {
+    if (replayData && replayData.environment) {
+      return {
+        debug: true,
+        playing: true,
+        step: 0,
+        controls: true,
+        ...replayData
+      };
+    }
+    return {
+      debug: true,
+      playing: true,
+      step: 0,
+      controls: true,
+      environment: {
+        id: "kaggriculture-arena-match",
+        name: "kaggriculture",
+        title: "Kaggriculture",
+        description: "Advanced farming simulation: two players each tend a 10x10 farm of four 5x5 quadrants.",
+        version: "0.1.0",
+        module_version: "1.32.7",
+        configuration: (replayData && replayData.configuration) ? replayData.configuration : {},
+        specification: (replayData && replayData.specification) ? replayData.specification : {},
+        steps: (replayData && replayData.steps) ? replayData.steps : []
+      }
+    };
+  }
+
   // --- VISUALIZER RENDERER ---
   function renderVisualizer(replayData) {
     if (!elVisIframe || !replayData) return;
 
     elVisCard.style.display = 'block';
-    const seed = replayData.configuration?.seed ?? 42;
+    const seed = replayData.configuration?.seed ?? (replayData.environment?.configuration?.seed ?? 42);
     elVisSeedBadge.textContent = `Seed: ${seed}`;
 
     const header = window.VISUALIZER_HEADER || '';
     const footer = window.VISUALIZER_FOOTER || '';
 
-    // Build the standalone HTML document
-    const fullHtml = header + `\n<script>window.kaggle = ${JSON.stringify(replayData)};</script>\n` + footer;
+    const kaggleObj = buildKagglePayload(replayData);
+    const fullHtml = header + `\n<script>window.kaggle = ${JSON.stringify(kaggleObj)};</script>\n` + footer;
 
     elVisIframe.srcdoc = fullHtml;
   }
@@ -499,12 +528,13 @@
 
     const header = window.VISUALIZER_HEADER || '';
     const footer = window.VISUALIZER_FOOTER || '';
-    const fullHtml = header + `\n<script>window.kaggle = ${JSON.stringify(currentReplay)};</script>\n` + footer;
+    const kaggleObj = buildKagglePayload(currentReplay);
+    const fullHtml = header + `\n<script>window.kaggle = ${JSON.stringify(kaggleObj)};</script>\n` + footer;
 
     const blob = new Blob([fullHtml], { type: 'text/html;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    const seed = currentReplay.configuration?.seed ?? 'match';
+    const seed = currentReplay.configuration?.seed ?? (kaggleObj.environment?.configuration?.seed ?? 'match');
     a.href = url;
     a.download = `kaggriculture_replay_seed${seed}.html`;
     a.click();
@@ -517,10 +547,11 @@
       return;
     }
 
-    const blob = new Blob([JSON.stringify(currentReplay, null, 2)], { type: 'application/json;charset=utf-8' });
+    const kaggleObj = buildKagglePayload(currentReplay);
+    const blob = new Blob([JSON.stringify(kaggleObj, null, 2)], { type: 'application/json;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    const seed = currentReplay.configuration?.seed ?? 'match';
+    const seed = currentReplay.configuration?.seed ?? (kaggleObj.environment?.configuration?.seed ?? 'match');
     a.href = url;
     a.download = `replay_seed${seed}.json`;
     a.click();
