@@ -201,6 +201,7 @@
 
   function handlePresetChange(val, elName, elCode, elDropzone, elFilename, playerIdx) {
     const presets = window.AGENT_PRESETS || {};
+    delete elCode.dataset.archivePayload;
     if (val === 'upload') {
       elDropzone.style.display = 'block';
     } else {
@@ -218,6 +219,10 @@
   }
 
   function setupDropzone(dropzone, fileInput, filenameDisplay, nameInput, codeTextarea) {
+    codeTextarea.addEventListener('input', () => {
+      delete codeTextarea.dataset.archivePayload;
+    });
+
     dropzone.addEventListener('click', () => fileInput.click());
 
     fileInput.addEventListener('change', (e) => {
@@ -245,21 +250,38 @@
   }
 
   function readFile(file, filenameDisplay, nameInput, codeTextarea) {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      codeTextarea.value = e.target.result;
-      filenameDisplay.textContent = '✓ ' + file.name;
-      nameInput.value = file.name.replace(/\.py$/i, '');
-    };
-    reader.readAsText(file);
+    const isArchive = /\.(tar\.gz|tgz|tar|zip)$/i.test(file.name);
+
+    if (isArchive) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const dataUrl = e.target.result;
+        const b64 = dataUrl.split(',')[1] || '';
+        const payload = `__ARCHIVE_BASE64__:${file.name}:${b64}`;
+        codeTextarea.dataset.archivePayload = payload;
+        codeTextarea.value = `# =====================================================================\n# 📦 ARCHIVE PACKAGE LOADED: ${file.name}\n# Size: ${(file.size / 1024).toFixed(1)} KB\n# =====================================================================\n# Multi-file Python Package (.tar.gz / .zip)\n#\n# The simulation engine will automatically:\n# 1. Unpack all Python source files and submodules.\n# 2. Add package directories to sys.path.\n# 3. Locate the entry point: checks main.py / agent.py or any .py with agent(obs) / main(obs).\n# 4. Execute the match in full 720 turns!\n# =====================================================================`;
+        filenameDisplay.textContent = '✓ ' + file.name;
+        nameInput.value = file.name.replace(/\.(tar\.gz|tgz|tar|zip)$/i, '');
+      };
+      reader.readAsDataURL(file);
+    } else {
+      delete codeTextarea.dataset.archivePayload;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        codeTextarea.value = e.target.result;
+        filenameDisplay.textContent = '✓ ' + file.name;
+        nameInput.value = file.name.replace(/\.py$/i, '');
+      };
+      reader.readAsText(file);
+    }
   }
 
   // --- SIMULATION EXECUTION ---
   function startSimulation() {
     if (isSimulating) return;
 
-    const agent0Code = elP0Code.value.trim();
-    const agent1Code = elP1Code.value.trim();
+    const agent0Code = elP0Code.dataset.archivePayload || elP0Code.value.trim();
+    const agent1Code = elP1Code.dataset.archivePayload || elP1Code.value.trim();
 
     if (!agent0Code) {
       alert('Please select or provide Python code for Player 0!');

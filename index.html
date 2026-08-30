@@ -60,17 +60,17 @@
                 <option value="starter">🥕 starter.py (Deterministic Carrot Loop)</option>
                 <option value="random">🎲 random.py (Random Exploration)</option>
                 <option value="pass">🛑 pass.py (No Action / Pass)</option>
-                <option value="upload">📁 Upload custom .py file...</option>
+                <option value="upload">📁 Upload .py or .tar.gz archive...</option>
                 <option value="custom">✏️ Write Python code directly...</option>
               </select>
             </div>
 
             <!-- Drag Drop / Upload Box -->
             <div class="upload-box" id="p0-dropzone" style="display: none;">
-              <input type="file" id="p0-file-input" accept=".py" style="display: none;" />
+              <input type="file" id="p0-file-input" accept=".py,.tar.gz,.tgz,.tar,.zip" style="display: none;" />
               <div class="upload-prompt" id="p0-upload-prompt">
-                <span class="upload-icon">📄</span>
-                <p>Drag & drop <code>agent.py</code> here or <strong>click to browse</strong></p>
+                <span class="upload-icon">📦</span>
+                <p>Drag & drop <code>agent.py</code> or <code>submission.tar.gz</code> here</p>
                 <span class="file-name" id="p0-filename"></span>
               </div>
             </div>
@@ -78,7 +78,7 @@
             <!-- Code Editor / Preview Box -->
             <div class="code-container">
               <div class="code-header">
-                <span>Python Source Code</span>
+                <span>Python Source Code / Package</span>
                 <button class="btn-text" id="p0-toggle-editor">Edit Code</button>
               </div>
               <textarea id="p0-code" class="code-editor" spellcheck="false" placeholder="def agent(obs): ..."></textarea>
@@ -133,17 +133,17 @@
                 <option value="abc">⚡ abc.py (Adaptive Market Liquidation)</option>
                 <option value="random">🎲 random.py (Random Exploration)</option>
                 <option value="pass">🛑 pass.py (No Action / Pass)</option>
-                <option value="upload">📁 Upload custom .py file...</option>
+                <option value="upload">📁 Upload .py or .tar.gz archive...</option>
                 <option value="custom">✏️ Write Python code directly...</option>
               </select>
             </div>
 
             <!-- Drag Drop / Upload Box -->
             <div class="upload-box" id="p1-dropzone" style="display: none;">
-              <input type="file" id="p1-file-input" accept=".py" style="display: none;" />
+              <input type="file" id="p1-file-input" accept=".py,.tar.gz,.tgz,.tar,.zip" style="display: none;" />
               <div class="upload-prompt" id="p1-upload-prompt">
-                <span class="upload-icon">📄</span>
-                <p>Drag & drop <code>agent.py</code> here or <strong>click to browse</strong></p>
+                <span class="upload-icon">📦</span>
+                <p>Drag & drop <code>agent.py</code> or <code>submission.tar.gz</code> here</p>
                 <span class="file-name" id="p1-filename"></span>
               </div>
             </div>
@@ -151,7 +151,7 @@
             <!-- Code Editor / Preview Box -->
             <div class="code-container">
               <div class="code-header">
-                <span>Python Source Code</span>
+                <span>Python Source Code / Package</span>
                 <button class="btn-text" id="p1-toggle-editor">Edit Code</button>
               </div>
               <textarea id="p1-code" class="code-editor" spellcheck="false" placeholder="def agent(obs): ..."></textarea>
