@@ -97,10 +97,16 @@
 
   function loadPresetsIntoUI() {
     const presets = window.AGENT_PRESETS || {};
-    if (presets.main) {
+    if (presets.rl) {
+      elP0Code.value = presets.rl;
+      elP0Name.value = 'Hierarchical RL Agent (Top $95k)';
+    } else if (presets.main) {
       elP0Code.value = presets.main;
     }
-    if (presets.starter) {
+    if (presets.main) {
+      elP1Code.value = presets.main;
+      elP1Name.value = 'Grandmaster Agent';
+    } else if (presets.starter) {
       elP1Code.value = presets.starter;
     }
   }
@@ -135,7 +141,7 @@
       simWorker.postMessage({
         type: 'INIT',
         enginePy: window.KAGGRICULTURE_ENGINE_PY || '',
-        runnerPy: window.RUNNER_CORE_PY || ''
+        runnerPy: window.KAGGRICULTURE_RUNNER_CORE_PY || window.RUNNER_CORE_PY || ''
       });
     } else {
       updateStatus('Web Workers Not Supported', 'error');
@@ -209,7 +215,8 @@
       elFilename.textContent = '';
       if (presets[val]) {
         elCode.value = presets[val];
-        if (val === 'main') elName.value = 'Grandmaster Agent';
+        if (val === 'rl') elName.value = 'Hierarchical RL Agent (Top $95k)';
+        else if (val === 'main') elName.value = 'Grandmaster Agent';
         else if (val === 'abc') elName.value = 'Adaptive Liquidation Agent';
         else if (val === 'starter') elName.value = 'Starter Baseline';
         else if (val === 'random') elName.value = 'Random Explorer';

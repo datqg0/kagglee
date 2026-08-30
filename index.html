@@ -55,6 +55,7 @@
             <div class="agent-source-select">
               <label>Strategy / Agent:</label>
               <select id="p0-preset" class="form-select">
+                <option value="rl" selected>🧠 rl_agent.py (Hierarchical RL Policy - Peak $95k)</option>
                 <option value="main">🌟 main.py (Melon Surge + GM Strawberry)</option>
                 <option value="abc">⚡ abc.py (Adaptive Market Liquidation)</option>
                 <option value="starter">🥕 starter.py (Deterministic Carrot Loop)</option>
@@ -120,7 +121,7 @@
             <div class="player-card-header">
               <div class="player-tag">
                 <span class="player-badge p1-badge">P1</span>
-                <input type="text" id="p1-name" class="player-name-input" value="Starter Baseline" placeholder="Player 2 Name" />
+                <input type="text" id="p1-name" class="player-name-input" value="Grandmaster Agent" placeholder="Player 2 Name" />
               </div>
               <span class="role-pill">Farmer Red</span>
             </div>
@@ -128,9 +129,10 @@
             <div class="agent-source-select">
               <label>Strategy / Agent:</label>
               <select id="p1-preset" class="form-select">
-                <option value="starter" selected>🥕 starter.py (Deterministic Carrot Loop)</option>
-                <option value="main">🌟 main.py (Melon Surge + GM Strawberry)</option>
+                <option value="main" selected>🌟 main.py (Melon Surge + GM Strawberry)</option>
+                <option value="rl">🧠 rl_agent.py (Hierarchical RL Policy - Peak $95k)</option>
                 <option value="abc">⚡ abc.py (Adaptive Market Liquidation)</option>
+                <option value="starter">🥕 starter.py (Deterministic Carrot Loop)</option>
                 <option value="random">🎲 random.py (Random Exploration)</option>
                 <option value="pass">🛑 pass.py (No Action / Pass)</option>
                 <option value="upload">📁 Upload .py or .tar.gz archive...</option>

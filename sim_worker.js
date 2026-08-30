@@ -17,6 +17,13 @@ async function initPyodide(engineCode, runnerCode) {
       indexURL: "https://cdn.jsdelivr.net/pyodide/v0.26.4/full/"
     });
     
+    self.postMessage({ type: 'STATUS', message: '📦 Loading NumPy & Math libraries...' });
+    try {
+      await pyodide.loadPackage(["numpy"]);
+    } catch (e) {
+      console.warn("NumPy preloading warning:", e);
+    }
+    
     self.postMessage({ type: 'STATUS', message: '🌾 Setting up Kaggriculture Simulation Engine...' });
     
     // Write engine and runner files into virtual filesystem
@@ -55,6 +62,15 @@ self.onmessage = async function(e) {
       }
       
       const { agent0Code, agent1Code, agent0Name, agent1Name, seed, episodeSteps, startingMoney, boardSize } = data;
+      
+      // Auto-load any packages requested by agent codes
+      if (agent0Code || agent1Code) {
+        try {
+          await pyodide.loadPackagesFromImports((agent0Code || "") + "\n" + (agent1Code || ""));
+        } catch (e) {
+          console.warn("loadPackagesFromImports warning:", e);
+        }
+      }
       
       // Callback for python to notify JS about simulation progress
       self.js_progress = (step, total, day, m0, m1) => {
