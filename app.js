@@ -97,7 +97,10 @@
 
   function loadPresetsIntoUI() {
     const presets = window.AGENT_PRESETS || {};
-    if (presets.miss) {
+    if (presets.rlv2) {
+      elP0Code.value = presets.rlv2;
+      elP0Name.value = 'RL Policy V2 (Multi-Opponent)';
+    } else if (presets.miss) {
       elP0Code.value = presets.miss;
       elP0Name.value = 'Neuro-Symbolic Agent (1000 Rules + RL)';
     } else if (presets.edf) {
@@ -109,9 +112,12 @@
     } else if (presets.main) {
       elP0Code.value = presets.main;
     }
-    if (presets.rl) {
-      elP1Code.value = presets.rl;
-      elP1Name.value = 'Hierarchical RL Agent (Top $95k)';
+    if (presets.miss) {
+      elP1Code.value = presets.miss;
+      elP1Name.value = 'Neuro-Symbolic Agent (1000 Rules + RL)';
+    } else if (presets.rlv2) {
+      elP1Code.value = presets.rlv2;
+      elP1Name.value = 'RL Policy V2 (Multi-Opponent)';
     } else if (presets.main) {
       elP1Code.value = presets.main;
       elP1Name.value = 'Grandmaster Agent';
@@ -224,7 +230,9 @@
       elFilename.textContent = '';
       if (presets[val]) {
         elCode.value = presets[val];
-        if (val === 'miss') elName.value = 'Neuro-Symbolic Agent (1000 Rules + RL)';
+        if (val === 'submission') elName.value = 'Kaggle Submission Agent';
+        else if (val === 'rlv2') elName.value = 'RL Policy V2 (Multi-Opponent)';
+        else if (val === 'miss') elName.value = 'Neuro-Symbolic Agent (1000 Rules + RL)';
         else if (val === 'edf') elName.value = 'Expert Framework (1000 Rules)';
         else if (val === 'rl') elName.value = 'Hierarchical RL Agent (Top $95k)';
         else if (val === 'main') elName.value = 'Grandmaster Agent';

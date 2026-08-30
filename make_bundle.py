@@ -22,6 +22,18 @@ def build():
     with open('miss.py', 'r', encoding='utf-8') as f:
         miss_py = f.read()
 
+    try:
+        with open('rlagentv2.py', 'r', encoding='utf-8') as f:
+            rlv2_py = f.read()
+    except Exception:
+        rlv2_py = rl_py
+
+    try:
+        with open('submission.py', 'r', encoding='utf-8') as f:
+            submission_py = f.read()
+    except Exception:
+        submission_py = main_py
+
     starter_py = """def agent(obs):
     farms = obs.get("farms", [])
     player = obs.get("player", 0)
@@ -93,6 +105,8 @@ def agent(obs):
 """
 
     presets = {
+        'submission': submission_py,
+        'rlv2': rlv2_py,
         'miss': miss_py,
         'edf': edf_py,
         'rl': rl_py,
