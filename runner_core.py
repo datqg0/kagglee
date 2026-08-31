@@ -294,21 +294,32 @@ def run_match_simulation(
     daily_timeline = []
     agent_errors = [[], []]
 
-    # Analytics trackers
-    stats = {
-        "p0": {
-            "money_history": [], "hires": 0, "market_orders": 0, "harvests": 0, "quadrants": 1,
-            "plants": 0, "waters": 0, "fertilizes": 0, "feeds": 0, "cares": 0, "digs": 0,
-            "coops": 0, "pastures": 0, "fertilizer_collected": 0, "seeds_bought": 0, "animals_bought": 0, "sells": 0,
-            "productive_actions": 0, "total_actions": 0, "worker_efficiency": 0, "peak_money": 3000
-        },
-        "p1": {
-            "money_history": [], "hires": 0, "market_orders": 0, "harvests": 0, "quadrants": 1,
-            "plants": 0, "waters": 0, "fertilizes": 0, "feeds": 0, "cares": 0, "digs": 0,
-            "coops": 0, "pastures": 0, "fertilizer_collected": 0, "seeds_bought": 0, "animals_bought": 0, "sells": 0,
-            "productive_actions": 0, "total_actions": 0, "worker_efficiency": 0, "peak_money": 3000
+    # Quant & Analytics trackers
+    def create_stats_tracker():
+        return {
+            "money_history": [],
+            "peak_money": 3000,
+            "gross_revenue": 0,
+            "total_spend": 0,
+            "spend_seeds": 0,
+            "spend_animals": 0,
+            "spend_hires": 0,
+            "spend_land": 0,
+            "spend_products": 0,
+            "net_profit": 0,
+            "roi_pct": 0.0,
+            "revenue_per_worker_turn": 0.0,
+            "revenue_by_product": {p: 0 for p in ["WHEAT", "CARROT", "TOMATO", "STRAWBERRY", "MELON", "EGG", "MILK", "WOOL", "FERTILIZER"]},
+            "units_sold": {p: 0 for p in ["WHEAT", "CARROT", "TOMATO", "STRAWBERRY", "MELON", "EGG", "MILK", "WOOL", "FERTILIZER"]},
+            "plants": 0, "waters": 0, "harvests": 0, "fertilizes": 0, "digs": 0,
+            "coops": 0, "pastures": 0, "seeds_bought": 0, "animals_bought": 0, "feeds": 0, "cares": 0, "fertilizer_collected": 0,
+            "market_orders": 0, "hires": 0, "quadrants": 1,
+            "movement_turns": 0, "farming_turns": 0, "ranching_turns": 0, "logistics_turns": 0, "idle_turns": 0,
+            "total_worker_turns": 0, "worker_efficiency": 0.0,
+            "archetype": "Generalist Farmer", "quant_grade": "A"
         }
-    }
+
+    stats = {"p0": create_stats_tracker(), "p1": create_stats_tracker()}
 
     t0 = time.time()
 
@@ -335,6 +346,10 @@ def run_match_simulation(
             }
             obs_dicts.append(obs_dict)
 
+        # Money and prices before turn execution
+        pre_money = [state[0].observation.farms[0]["money"], state[1].observation.farms[1]["money"]]
+        pre_market_prices = copy.deepcopy(getattr(state[0].observation.market, "prices", {}))
+
         # Call agents
         for i in range(2):
             try:
@@ -351,15 +366,17 @@ def run_match_simulation(
         # Step environment
         engine.interpreter(state, env)
 
-        # Record analytics
-        m0 = state[0].observation.farms[0]["money"]
-        m1 = state[0].observation.farms[1]["money"]
-        stats["p0"]["peak_money"] = max(stats["p0"]["peak_money"], round(m0, 1))
-        stats["p1"]["peak_money"] = max(stats["p1"]["peak_money"], round(m1, 1))
+        # Money after turn execution
+        post_money = [state[0].observation.farms[0]["money"], state[1].observation.farms[1]["money"]]
 
-        productive_ops = {"PLANT", "WATER", "HARVEST", "FERTILIZE", "FEED", "CARE", "DIG", "COLLECT_FERTILIZER", "BUILD_COOP", "BUILD_PASTURE", "PLACE", "PICKUP", "DROP"}
+        # Track financials and actions
+        movement_ops = {"NORTH", "SOUTH", "EAST", "WEST"}
+        farming_ops = {"PLANT", "WATER", "HARVEST", "FERTILIZE", "DIG"}
+        ranching_ops = {"FEED", "CARE", "COLLECT_FERTILIZER", "BUILD_COOP", "BUILD_PASTURE"}
+        logistics_ops = {"PLACE", "PICKUP", "DROP"}
 
         for i, (p_key, st) in enumerate([("p0", state[0]), ("p1", state[1])]):
+            stats[p_key]["peak_money"] = max(stats[p_key]["peak_money"], round(post_money[i], 1))
             act = st.action
             if act:
                 market_orders = act.get("market", [])
@@ -367,11 +384,37 @@ def run_match_simulation(
                 for order in market_orders:
                     if not order or not isinstance(order, list): continue
                     m_op = order[0]
-                    if m_op == "HIRE": stats[p_key]["hires"] += 1
-                    elif m_op == "BUY_SEED": stats[p_key]["seeds_bought"] += (order[2] if len(order) > 2 and isinstance(order[2], int) else 1)
-                    elif m_op == "BUY_ANIMAL": stats[p_key]["animals_bought"] += (order[2] if len(order) > 2 and isinstance(order[2], int) else 1)
-                    elif m_op == "SELL": stats[p_key]["sells"] += (order[2] if len(order) > 2 and isinstance(order[2], int) else 1)
-                
+                    n_units = order[2] if len(order) > 2 and isinstance(order[2], int) else 1
+                    item_name = order[1] if len(order) > 1 and isinstance(order[1], str) else ""
+
+                    if m_op == "HIRE":
+                        stats[p_key]["hires"] += 1
+                        # Estimate Fibonacci hire cost
+                        hire_count_today = state[i].observation.farms[i].get("hires_today", 1)
+                        stats[p_key]["spend_hires"] += engine._hire_cost(max(0, hire_count_today - 1))
+                    elif m_op == "BUY_LAND":
+                        unlocked_count = len(state[i].observation.farms[i].get("unlocked_quadrants", ["NW"]))
+                        cost = engine.LAND_PRICES[min(2, max(0, unlocked_count - 1))]
+                        stats[p_key]["spend_land"] += cost
+                    elif m_op == "BUY_SEED":
+                        stats[p_key]["seeds_bought"] += n_units
+                        seed_cost = engine.CROPS.get(item_name, {}).get("seed", 20) * n_units
+                        stats[p_key]["spend_seeds"] += seed_cost
+                    elif m_op == "BUY_ANIMAL":
+                        stats[p_key]["animals_bought"] += n_units
+                        animal_cost = engine.ANIMALS.get(item_name, {}).get("cost", 400) * n_units
+                        stats[p_key]["spend_animals"] += animal_cost
+                    elif m_op == "BUY_PRODUCT":
+                        prod_price = pre_market_prices.get(item_name, 25) * n_units
+                        stats[p_key]["spend_products"] += prod_price
+                    elif m_op == "SELL":
+                        stats[p_key]["units_sold"][item_name] = stats[p_key]["units_sold"].get(item_name, 0) + n_units
+                        # Realized revenue
+                        approx_price = pre_market_prices.get(item_name, 1)
+                        rev = approx_price * n_units
+                        stats[p_key]["revenue_by_product"][item_name] = stats[p_key]["revenue_by_product"].get(item_name, 0) + rev
+                        stats[p_key]["gross_revenue"] += rev
+
                 # Unit actions telemetry
                 unit_acts = []
                 if act.get("farmer"): unit_acts.append(act["farmer"])
@@ -381,9 +424,13 @@ def run_match_simulation(
                 for u_act in unit_acts:
                     if not u_act or not isinstance(u_act, list): continue
                     u_op = u_act[0]
-                    stats[p_key]["total_actions"] += 1
-                    if u_op in productive_ops:
-                        stats[p_key]["productive_actions"] += 1
+                    stats[p_key]["total_worker_turns"] += 1
+
+                    if u_op in movement_ops: stats[p_key]["movement_turns"] += 1
+                    elif u_op in farming_ops: stats[p_key]["farming_turns"] += 1
+                    elif u_op in ranching_ops: stats[p_key]["ranching_turns"] += 1
+                    elif u_op in logistics_ops: stats[p_key]["logistics_turns"] += 1
+                    elif u_op == "PASS": stats[p_key]["idle_turns"] += 1
 
                     if u_op == "HARVEST": stats[p_key]["harvests"] += 1
                     elif u_op == "PLANT": stats[p_key]["plants"] += 1
@@ -396,14 +443,8 @@ def run_match_simulation(
                     elif u_op == "BUILD_COOP": stats[p_key]["coops"] += 1
                     elif u_op == "BUILD_PASTURE": stats[p_key]["pastures"] += 1
 
-            unlocked = len(st.observation.farms[i].get("unlocked_quadrants", ["NW"]))
+            unlocked = len(state[i].observation.farms[i].get("unlocked_quadrants", ["NW"]))
             stats[p_key]["quadrants"] = max(stats[p_key]["quadrants"], unlocked)
-
-        # Compute efficiency at completion
-        for p_key in ["p0", "p1"]:
-            tot = stats[p_key]["total_actions"]
-            prod = stats[p_key]["productive_actions"]
-            stats[p_key]["worker_efficiency"] = round((prod / tot * 100), 1) if tot > 0 else 0.0
 
         # Record step in replay structure (exact Kaggle schema)
         step_record = [
@@ -425,6 +466,8 @@ def run_match_simulation(
         steps_log.append(step_record)
 
         # Record daily checkpoint
+        m0 = post_money[0]
+        m1 = post_money[1]
         if hour == 0 or step == env.configuration["episodeSteps"] - 1:
             daily_timeline.append({
                 "day": day,
@@ -439,6 +482,50 @@ def run_match_simulation(
 
     final_m0 = state[0].observation.farms[0]["money"]
     final_m1 = state[0].observation.farms[1]["money"]
+
+    # Finalize microeconomic KPIs
+    for i, p_key in enumerate(["p0", "p1"]):
+        st_p = stats[p_key]
+        final_bal = [final_m0, final_m1][i]
+        st_p["total_spend"] = st_p["spend_seeds"] + st_p["spend_animals"] + st_p["spend_hires"] + st_p["spend_land"] + st_p["spend_products"]
+        st_p["net_profit"] = round(final_bal - starting_money, 1)
+        st_p["roi_pct"] = round((st_p["net_profit"] / st_p["total_spend"] * 100), 1) if st_p["total_spend"] > 0 else 0.0
+        tot_turns = st_p["total_worker_turns"]
+        st_p["revenue_per_worker_turn"] = round(st_p["gross_revenue"] / tot_turns, 2) if tot_turns > 0 else 0.0
+        
+        prod_turns = st_p["farming_turns"] + st_p["ranching_turns"] + st_p["logistics_turns"]
+        st_p["worker_efficiency"] = round((prod_turns / tot_turns * 100), 1) if tot_turns > 0 else 0.0
+
+        # Archetype classification
+        rev_by_prod = st_p["revenue_by_product"]
+        gross = max(1, st_p["gross_revenue"])
+        livestock_rev = rev_by_prod.get("MILK", 0) + rev_by_prod.get("WOOL", 0) + rev_by_prod.get("EGG", 0)
+        crop_rev = rev_by_prod.get("STRAWBERRY", 0) + rev_by_prod.get("MELON", 0) + rev_by_prod.get("TOMATO", 0) + rev_by_prod.get("CARROT", 0) + rev_by_prod.get("WHEAT", 0)
+        
+        if livestock_rev >= 0.55 * gross:
+            st_p["archetype"] = "🐮 Livestock & Dairy Industrialist"
+        elif (rev_by_prod.get("STRAWBERRY", 0) + rev_by_prod.get("MELON", 0)) >= 0.45 * gross:
+            st_p["archetype"] = "🍓 High-Yield Cash Crop Master"
+        elif (rev_by_prod.get("WHEAT", 0) + rev_by_prod.get("CARROT", 0)) >= 0.5 * gross:
+            st_p["archetype"] = "🌾 High-Speed Staple Scaler"
+        elif gross > 10000:
+            st_p["archetype"] = "🚜 Diversified Agribusiness"
+        else:
+            st_p["archetype"] = "🌱 Subsistence Farming"
+
+        # Quant Performance Grade
+        if final_bal >= 85000 and st_p["roi_pct"] >= 180:
+            st_p["quant_grade"] = "S+ (Apex Grandmaster)"
+        elif final_bal >= 70000 and st_p["roi_pct"] >= 140:
+            st_p["quant_grade"] = "S (Elite Quant)"
+        elif final_bal >= 50000:
+            st_p["quant_grade"] = "A+ (Master)"
+        elif final_bal >= 30000:
+            st_p["quant_grade"] = "A (Advanced)"
+        elif final_bal >= 10000:
+            st_p["quant_grade"] = "B (Intermediate)"
+        else:
+            st_p["quant_grade"] = "C (Novice)"
 
     winner = "P0" if final_m0 > final_m1 else ("P1" if final_m1 > final_m0 else "TIE")
     winner_name = agent_names[0] if winner == "P0" else (agent_names[1] if winner == "P1" else "Tie")

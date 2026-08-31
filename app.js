@@ -59,10 +59,20 @@
   // Stats Table
   const elThP0 = document.getElementById('th-p0');
   const elThP1 = document.getElementById('th-p1');
+  const elStatP0Grade = document.getElementById('stat-p0-grade');
+  const elStatP1Grade = document.getElementById('stat-p1-grade');
+  const elStatP0Archetype = document.getElementById('stat-p0-archetype');
+  const elStatP1Archetype = document.getElementById('stat-p1-archetype');
   const elStatP0Money = document.getElementById('stat-p0-money');
   const elStatP1Money = document.getElementById('stat-p1-money');
   const elStatP0PeakMoney = document.getElementById('stat-p0-peak-money');
   const elStatP1PeakMoney = document.getElementById('stat-p1-peak-money');
+  const elStatP0Spend = document.getElementById('stat-p0-spend');
+  const elStatP1Spend = document.getElementById('stat-p1-spend');
+  const elStatP0Roi = document.getElementById('stat-p0-roi');
+  const elStatP1Roi = document.getElementById('stat-p1-roi');
+  const elStatP0RevTurn = document.getElementById('stat-p0-rev-turn');
+  const elStatP1RevTurn = document.getElementById('stat-p1-rev-turn');
   const elStatP0Quads = document.getElementById('stat-p0-quads');
   const elStatP1Quads = document.getElementById('stat-p1-quads');
   const elStatP0Plants = document.getElementById('stat-p0-plants');
@@ -89,6 +99,8 @@
   const elStatP1Hires = document.getElementById('stat-p1-hires');
   const elStatP0Efficiency = document.getElementById('stat-p0-efficiency');
   const elStatP1Efficiency = document.getElementById('stat-p1-efficiency');
+  const elStatP0ActionSplit = document.getElementById('stat-p0-action-split');
+  const elStatP1ActionSplit = document.getElementById('stat-p1-action-split');
   const elStatP0Errors = document.getElementById('stat-p0-errors');
   const elStatP1Errors = document.getElementById('stat-p1-errors');
 
@@ -458,18 +470,33 @@
     elLegendP0Name.textContent = p0.name;
     elLegendP1Name.textContent = p1.name;
 
-    // In-Depth Table Stats
+    // In-Depth Quant Table Stats
     elThP0.textContent = p0.name;
     elThP1.textContent = p1.name;
 
     const s0 = p0.stats || {};
     const s1 = p1.stats || {};
 
+    if (elStatP0Grade) elStatP0Grade.textContent = s0.quant_grade || 'A';
+    if (elStatP1Grade) elStatP1Grade.textContent = s1.quant_grade || 'A';
+
+    if (elStatP0Archetype) elStatP0Archetype.textContent = s0.archetype || '🚜 Generalist Farmer';
+    if (elStatP1Archetype) elStatP1Archetype.textContent = s1.archetype || '🚜 Generalist Farmer';
+
     elStatP0Money.textContent = '$' + Math.round(p0.final_money).toLocaleString();
     elStatP1Money.textContent = '$' + Math.round(p1.final_money).toLocaleString();
 
     if (elStatP0PeakMoney) elStatP0PeakMoney.textContent = '$' + Math.round(s0.peak_money || p0.final_money).toLocaleString();
     if (elStatP1PeakMoney) elStatP1PeakMoney.textContent = '$' + Math.round(s1.peak_money || p1.final_money).toLocaleString();
+
+    if (elStatP0Spend) elStatP0Spend.textContent = '$' + Math.round(s0.total_spend || 0).toLocaleString();
+    if (elStatP1Spend) elStatP1Spend.textContent = '$' + Math.round(s1.total_spend || 0).toLocaleString();
+
+    if (elStatP0Roi) elStatP0Roi.textContent = `${s0.roi_pct > 0 ? '+' : ''}${s0.roi_pct ?? 0}%`;
+    if (elStatP1Roi) elStatP1Roi.textContent = `${s1.roi_pct > 0 ? '+' : ''}${s1.roi_pct ?? 0}%`;
+
+    if (elStatP0RevTurn) elStatP0RevTurn.textContent = `$${(s0.revenue_per_worker_turn || 0).toFixed(2)} / turn`;
+    if (elStatP1RevTurn) elStatP1RevTurn.textContent = `$${(s1.revenue_per_worker_turn || 0).toFixed(2)} / turn`;
 
     elStatP0Quads.textContent = `${s0.quadrants || 1} / 4`;
     elStatP1Quads.textContent = `${s1.quadrants || 1} / 4`;
@@ -509,6 +536,18 @@
 
     if (elStatP0Efficiency) elStatP0Efficiency.textContent = `${s0.worker_efficiency ?? 0}%`;
     if (elStatP1Efficiency) elStatP1Efficiency.textContent = `${s1.worker_efficiency ?? 0}%`;
+
+    function formatActionSplit(st) {
+      const tot = st.total_worker_turns || 1;
+      const walk = Math.round((st.movement_turns || 0) / tot * 100);
+      const farm = Math.round((st.farming_turns || 0) / tot * 100);
+      const ranch = Math.round((st.ranching_turns || 0) / tot * 100);
+      const idle = Math.round((st.idle_turns || 0) / tot * 100);
+      return `🚶${walk}% • 🌾${farm}% • 🐄${ranch}% • 💤${idle}%`;
+    }
+
+    if (elStatP0ActionSplit) elStatP0ActionSplit.textContent = formatActionSplit(s0);
+    if (elStatP1ActionSplit) elStatP1ActionSplit.textContent = formatActionSplit(s1);
 
     elStatP0Errors.textContent = p0.errors.length > 0 ? `${p0.errors.length} error(s)` : '0';
     elStatP1Errors.textContent = p1.errors.length > 0 ? `${p1.errors.length} error(s)` : '0';

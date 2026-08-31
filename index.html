@@ -244,8 +244,18 @@
                 </tr>
               </thead>
               <tbody>
-                <!-- SECTION 1: WEALTH & TERRITORY -->
-                <tr class="stats-section-row"><td colspan="3">💰 Wealth & Territory</td></tr>
+                <!-- SECTION 1: WEALTH & UNIT ECONOMICS -->
+                <tr class="stats-section-row"><td colspan="3">💰 Wealth & Unit Economics</td></tr>
+                <tr>
+                  <td>🎖️ Quant Strategy Grade</td>
+                  <td id="stat-p0-grade" class="font-bold text-accent">A</td>
+                  <td id="stat-p1-grade" class="font-bold text-accent">A</td>
+                </tr>
+                <tr>
+                  <td>🏷️ Strategy Archetype</td>
+                  <td id="stat-p0-archetype" class="font-semibold">-</td>
+                  <td id="stat-p1-archetype" class="font-semibold">-</td>
+                </tr>
                 <tr>
                   <td>💰 Final Bank Balance</td>
                   <td id="stat-p0-money" class="text-p0 font-bold">$0</td>
@@ -257,13 +267,28 @@
                   <td id="stat-p1-peak-money" class="font-semibold">$3,000</td>
                 </tr>
                 <tr>
+                  <td>💸 Total Capital Outlay (Spend)</td>
+                  <td id="stat-p0-spend">$0</td>
+                  <td id="stat-p1-spend">$0</td>
+                </tr>
+                <tr>
+                  <td>📊 Net Realized ROI %</td>
+                  <td id="stat-p0-roi" class="font-bold text-accent">0%</td>
+                  <td id="stat-p1-roi" class="font-bold text-accent">0%</td>
+                </tr>
+                <tr>
+                  <td>⚡ Revenue / Worker Turn</td>
+                  <td id="stat-p0-rev-turn">$0.00 / turn</td>
+                  <td id="stat-p1-rev-turn">$0.00 / turn</td>
+                </tr>
+                <tr>
                   <td>🗺️ Quadrants Unlocked</td>
                   <td id="stat-p0-quads">1 / 4</td>
                   <td id="stat-p1-quads">1 / 4</td>
                 </tr>
 
                 <!-- SECTION 2: CROPS & FARMING -->
-                <tr class="stats-section-row"><td colspan="3">🌾 Agriculture & Crops</td></tr>
+                <tr class="stats-section-row"><td colspan="3">🌾 Agriculture & Field Ops</td></tr>
                 <tr>
                   <td>🌱 Crops Planted</td>
                   <td id="stat-p0-plants">0</td>
@@ -313,8 +338,8 @@
                   <td id="stat-p1-fertilizer-collected">0</td>
                 </tr>
 
-                <!-- SECTION 4: MARKET & WORKFORCE -->
-                <tr class="stats-section-row"><td colspan="3">⚡ Market & Workforce APM</td></tr>
+                <!-- SECTION 4: MARKET & WORKFORCE APM -->
+                <tr class="stats-section-row"><td colspan="3">⚡ Workforce & Labor Allocation</td></tr>
                 <tr>
                   <td>🛒 Market Orders Placed</td>
                   <td id="stat-p0-orders">0</td>
@@ -329,6 +354,11 @@
                   <td>🎯 Productive Action APM</td>
                   <td id="stat-p0-efficiency" class="font-bold text-accent">0%</td>
                   <td id="stat-p1-efficiency" class="font-bold text-accent">0%</td>
+                </tr>
+                <tr>
+                  <td>🚶 Walk vs Farm vs Idle Split</td>
+                  <td id="stat-p0-action-split" style="font-size: 0.75rem;">-</td>
+                  <td id="stat-p1-action-split" style="font-size: 0.75rem;">-</td>
                 </tr>
                 <tr>
                   <td>⚠️ Exceptions / Crashes</td>
