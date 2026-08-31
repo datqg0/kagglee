@@ -61,14 +61,34 @@
   const elThP1 = document.getElementById('th-p1');
   const elStatP0Money = document.getElementById('stat-p0-money');
   const elStatP1Money = document.getElementById('stat-p1-money');
+  const elStatP0PeakMoney = document.getElementById('stat-p0-peak-money');
+  const elStatP1PeakMoney = document.getElementById('stat-p1-peak-money');
   const elStatP0Quads = document.getElementById('stat-p0-quads');
   const elStatP1Quads = document.getElementById('stat-p1-quads');
+  const elStatP0Plants = document.getElementById('stat-p0-plants');
+  const elStatP1Plants = document.getElementById('stat-p1-plants');
+  const elStatP0Waters = document.getElementById('stat-p0-waters');
+  const elStatP1Waters = document.getElementById('stat-p1-waters');
   const elStatP0Harvests = document.getElementById('stat-p0-harvests');
   const elStatP1Harvests = document.getElementById('stat-p1-harvests');
+  const elStatP0Fertilizes = document.getElementById('stat-p0-fertilizes');
+  const elStatP1Fertilizes = document.getElementById('stat-p1-fertilizes');
+  const elStatP0Digs = document.getElementById('stat-p0-digs');
+  const elStatP1Digs = document.getElementById('stat-p1-digs');
+  const elStatP0AnimalsBought = document.getElementById('stat-p0-animals-bought');
+  const elStatP1AnimalsBought = document.getElementById('stat-p1-animals-bought');
+  const elStatP0Feeds = document.getElementById('stat-p0-feeds');
+  const elStatP1Feeds = document.getElementById('stat-p1-feeds');
+  const elStatP0Cares = document.getElementById('stat-p0-cares');
+  const elStatP1Cares = document.getElementById('stat-p1-cares');
+  const elStatP0FertilizerCollected = document.getElementById('stat-p0-fertilizer-collected');
+  const elStatP1FertilizerCollected = document.getElementById('stat-p1-fertilizer-collected');
   const elStatP0Orders = document.getElementById('stat-p0-orders');
   const elStatP1Orders = document.getElementById('stat-p1-orders');
   const elStatP0Hires = document.getElementById('stat-p0-hires');
   const elStatP1Hires = document.getElementById('stat-p1-hires');
+  const elStatP0Efficiency = document.getElementById('stat-p0-efficiency');
+  const elStatP1Efficiency = document.getElementById('stat-p1-efficiency');
   const elStatP0Errors = document.getElementById('stat-p0-errors');
   const elStatP1Errors = document.getElementById('stat-p1-errors');
 
@@ -438,24 +458,57 @@
     elLegendP0Name.textContent = p0.name;
     elLegendP1Name.textContent = p1.name;
 
-    // Table Stats
+    // In-Depth Table Stats
     elThP0.textContent = p0.name;
     elThP1.textContent = p1.name;
+
+    const s0 = p0.stats || {};
+    const s1 = p1.stats || {};
 
     elStatP0Money.textContent = '$' + Math.round(p0.final_money).toLocaleString();
     elStatP1Money.textContent = '$' + Math.round(p1.final_money).toLocaleString();
 
-    elStatP0Quads.textContent = `${p0.stats.quadrants} / 4`;
-    elStatP1Quads.textContent = `${p1.stats.quadrants} / 4`;
+    if (elStatP0PeakMoney) elStatP0PeakMoney.textContent = '$' + Math.round(s0.peak_money || p0.final_money).toLocaleString();
+    if (elStatP1PeakMoney) elStatP1PeakMoney.textContent = '$' + Math.round(s1.peak_money || p1.final_money).toLocaleString();
 
-    elStatP0Harvests.textContent = p0.stats.harvests.toLocaleString();
-    elStatP1Harvests.textContent = p1.stats.harvests.toLocaleString();
+    elStatP0Quads.textContent = `${s0.quadrants || 1} / 4`;
+    elStatP1Quads.textContent = `${s1.quadrants || 1} / 4`;
 
-    elStatP0Orders.textContent = p0.stats.market_orders.toLocaleString();
-    elStatP1Orders.textContent = p1.stats.market_orders.toLocaleString();
+    if (elStatP0Plants) elStatP0Plants.textContent = (s0.plants || 0).toLocaleString();
+    if (elStatP1Plants) elStatP1Plants.textContent = (s1.plants || 0).toLocaleString();
 
-    elStatP0Hires.textContent = p0.stats.hires.toLocaleString();
-    elStatP1Hires.textContent = p1.stats.hires.toLocaleString();
+    if (elStatP0Waters) elStatP0Waters.textContent = (s0.waters || 0).toLocaleString();
+    if (elStatP1Waters) elStatP1Waters.textContent = (s1.waters || 0).toLocaleString();
+
+    elStatP0Harvests.textContent = (s0.harvests || 0).toLocaleString();
+    elStatP1Harvests.textContent = (s1.harvests || 0).toLocaleString();
+
+    if (elStatP0Fertilizes) elStatP0Fertilizes.textContent = (s0.fertilizes || 0).toLocaleString();
+    if (elStatP1Fertilizes) elStatP1Fertilizes.textContent = (s1.fertilizes || 0).toLocaleString();
+
+    if (elStatP0Digs) elStatP0Digs.textContent = (s0.digs || 0).toLocaleString();
+    if (elStatP1Digs) elStatP1Digs.textContent = (s1.digs || 0).toLocaleString();
+
+    if (elStatP0AnimalsBought) elStatP0AnimalsBought.textContent = (s0.animals_bought || 0).toLocaleString();
+    if (elStatP1AnimalsBought) elStatP1AnimalsBought.textContent = (s1.animals_bought || 0).toLocaleString();
+
+    if (elStatP0Feeds) elStatP0Feeds.textContent = (s0.feeds || 0).toLocaleString();
+    if (elStatP1Feeds) elStatP1Feeds.textContent = (s1.feeds || 0).toLocaleString();
+
+    if (elStatP0Cares) elStatP0Cares.textContent = (s0.cares || 0).toLocaleString();
+    if (elStatP1Cares) elStatP1Cares.textContent = (s1.cares || 0).toLocaleString();
+
+    if (elStatP0FertilizerCollected) elStatP0FertilizerCollected.textContent = (s0.fertilizer_collected || 0).toLocaleString();
+    if (elStatP1FertilizerCollected) elStatP1FertilizerCollected.textContent = (s1.fertilizer_collected || 0).toLocaleString();
+
+    elStatP0Orders.textContent = (s0.market_orders || 0).toLocaleString();
+    elStatP1Orders.textContent = (s1.market_orders || 0).toLocaleString();
+
+    elStatP0Hires.textContent = (s0.hires || 0).toLocaleString();
+    elStatP1Hires.textContent = (s1.hires || 0).toLocaleString();
+
+    if (elStatP0Efficiency) elStatP0Efficiency.textContent = `${s0.worker_efficiency ?? 0}%`;
+    if (elStatP1Efficiency) elStatP1Efficiency.textContent = `${s1.worker_efficiency ?? 0}%`;
 
     elStatP0Errors.textContent = p0.errors.length > 0 ? `${p0.errors.length} error(s)` : '0';
     elStatP1Errors.textContent = p1.errors.length > 0 ? `${p1.errors.length} error(s)` : '0';

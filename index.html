@@ -234,31 +234,87 @@
 
           <!-- STATS BREAKDOWN -->
           <div class="stats-breakdown">
-            <h3>📊 Match Statistics Breakdown</h3>
+            <h3>📊 In-Depth Match Analytics</h3>
             <table class="stats-table">
               <thead>
                 <tr>
-                  <th>Metric</th>
+                  <th>Performance Metric</th>
                   <th id="th-p0">Player 0</th>
                   <th id="th-p1">Player 1</th>
                 </tr>
               </thead>
               <tbody>
+                <!-- SECTION 1: WEALTH & TERRITORY -->
+                <tr class="stats-section-row"><td colspan="3">💰 Wealth & Territory</td></tr>
                 <tr>
-                  <td>💰 Final Balance</td>
+                  <td>💰 Final Bank Balance</td>
                   <td id="stat-p0-money" class="text-p0 font-bold">$0</td>
                   <td id="stat-p1-money" class="text-p1 font-bold">$0</td>
+                </tr>
+                <tr>
+                  <td>📈 Peak Wealth Reached</td>
+                  <td id="stat-p0-peak-money" class="font-semibold">$3,000</td>
+                  <td id="stat-p1-peak-money" class="font-semibold">$3,000</td>
                 </tr>
                 <tr>
                   <td>🗺️ Quadrants Unlocked</td>
                   <td id="stat-p0-quads">1 / 4</td>
                   <td id="stat-p1-quads">1 / 4</td>
                 </tr>
+
+                <!-- SECTION 2: CROPS & FARMING -->
+                <tr class="stats-section-row"><td colspan="3">🌾 Agriculture & Crops</td></tr>
+                <tr>
+                  <td>🌱 Crops Planted</td>
+                  <td id="stat-p0-plants">0</td>
+                  <td id="stat-p1-plants">0</td>
+                </tr>
+                <tr>
+                  <td>💧 Watering Operations</td>
+                  <td id="stat-p0-waters">0</td>
+                  <td id="stat-p1-waters">0</td>
+                </tr>
                 <tr>
                   <td>🌾 Total Harvests</td>
                   <td id="stat-p0-harvests">0</td>
                   <td id="stat-p1-harvests">0</td>
                 </tr>
+                <tr>
+                  <td>✨ Fertilized Crops</td>
+                  <td id="stat-p0-fertilizes">0</td>
+                  <td id="stat-p1-fertilizes">0</td>
+                </tr>
+                <tr>
+                  <td>⛏️ Weeds Cleared (Dug)</td>
+                  <td id="stat-p0-digs">0</td>
+                  <td id="stat-p1-digs">0</td>
+                </tr>
+
+                <!-- SECTION 3: LIVESTOCK & RANCHING -->
+                <tr class="stats-section-row"><td colspan="3">🐄 Livestock & Dairy</td></tr>
+                <tr>
+                  <td>🐣 Animals Purchased</td>
+                  <td id="stat-p0-animals-bought">0</td>
+                  <td id="stat-p1-animals-bought">0</td>
+                </tr>
+                <tr>
+                  <td>🌾 Feeding Turns Given</td>
+                  <td id="stat-p0-feeds">0</td>
+                  <td id="stat-p1-feeds">0</td>
+                </tr>
+                <tr>
+                  <td>❤️ Daily Care Given</td>
+                  <td id="stat-p0-cares">0</td>
+                  <td id="stat-p1-cares">0</td>
+                </tr>
+                <tr>
+                  <td>💩 Fertilizer Gathered</td>
+                  <td id="stat-p0-fertilizer-collected">0</td>
+                  <td id="stat-p1-fertilizer-collected">0</td>
+                </tr>
+
+                <!-- SECTION 4: MARKET & WORKFORCE -->
+                <tr class="stats-section-row"><td colspan="3">⚡ Market & Workforce APM</td></tr>
                 <tr>
                   <td>🛒 Market Orders Placed</td>
                   <td id="stat-p0-orders">0</td>
@@ -270,7 +326,12 @@
                   <td id="stat-p1-hires">0</td>
                 </tr>
                 <tr>
-                  <td>⚠️ Runtime Exceptions / Errors</td>
+                  <td>🎯 Productive Action APM</td>
+                  <td id="stat-p0-efficiency" class="font-bold text-accent">0%</td>
+                  <td id="stat-p1-efficiency" class="font-bold text-accent">0%</td>
+                </tr>
+                <tr>
+                  <td>⚠️ Exceptions / Crashes</td>
                   <td id="stat-p0-errors">0</td>
                   <td id="stat-p1-errors">0</td>
                 </tr>

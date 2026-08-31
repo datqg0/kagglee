@@ -296,8 +296,18 @@ def run_match_simulation(
 
     # Analytics trackers
     stats = {
-        "p0": {"money_history": [], "hires": 0, "market_orders": 0, "harvests": 0, "quadrants": 1},
-        "p1": {"money_history": [], "hires": 0, "market_orders": 0, "harvests": 0, "quadrants": 1}
+        "p0": {
+            "money_history": [], "hires": 0, "market_orders": 0, "harvests": 0, "quadrants": 1,
+            "plants": 0, "waters": 0, "fertilizes": 0, "feeds": 0, "cares": 0, "digs": 0,
+            "coops": 0, "pastures": 0, "fertilizer_collected": 0, "seeds_bought": 0, "animals_bought": 0, "sells": 0,
+            "productive_actions": 0, "total_actions": 0, "worker_efficiency": 0, "peak_money": 3000
+        },
+        "p1": {
+            "money_history": [], "hires": 0, "market_orders": 0, "harvests": 0, "quadrants": 1,
+            "plants": 0, "waters": 0, "fertilizes": 0, "feeds": 0, "cares": 0, "digs": 0,
+            "coops": 0, "pastures": 0, "fertilizer_collected": 0, "seeds_bought": 0, "animals_bought": 0, "sells": 0,
+            "productive_actions": 0, "total_actions": 0, "worker_efficiency": 0, "peak_money": 3000
+        }
     }
 
     t0 = time.time()
@@ -344,6 +354,10 @@ def run_match_simulation(
         # Record analytics
         m0 = state[0].observation.farms[0]["money"]
         m1 = state[0].observation.farms[1]["money"]
+        stats["p0"]["peak_money"] = max(stats["p0"]["peak_money"], round(m0, 1))
+        stats["p1"]["peak_money"] = max(stats["p1"]["peak_money"], round(m1, 1))
+
+        productive_ops = {"PLANT", "WATER", "HARVEST", "FERTILIZE", "FEED", "CARE", "DIG", "COLLECT_FERTILIZER", "BUILD_COOP", "BUILD_PASTURE", "PLACE", "PICKUP", "DROP"}
 
         for i, (p_key, st) in enumerate([("p0", state[0]), ("p1", state[1])]):
             act = st.action
@@ -351,18 +365,45 @@ def run_match_simulation(
                 market_orders = act.get("market", [])
                 stats[p_key]["market_orders"] += len(market_orders)
                 for order in market_orders:
-                    if order and order[0] == "HIRE":
-                        stats[p_key]["hires"] += 1
+                    if not order or not isinstance(order, list): continue
+                    m_op = order[0]
+                    if m_op == "HIRE": stats[p_key]["hires"] += 1
+                    elif m_op == "BUY_SEED": stats[p_key]["seeds_bought"] += (order[2] if len(order) > 2 and isinstance(order[2], int) else 1)
+                    elif m_op == "BUY_ANIMAL": stats[p_key]["animals_bought"] += (order[2] if len(order) > 2 and isinstance(order[2], int) else 1)
+                    elif m_op == "SELL": stats[p_key]["sells"] += (order[2] if len(order) > 2 and isinstance(order[2], int) else 1)
                 
-                farmer_op = act.get("farmer", ["PASS"])[0] if act.get("farmer") else "PASS"
-                if farmer_op == "HARVEST":
-                    stats[p_key]["harvests"] += 1
+                # Unit actions telemetry
+                unit_acts = []
+                if act.get("farmer"): unit_acts.append(act["farmer"])
                 for hand_act in act.get("hands", []):
-                    if hand_act and hand_act[0] == "HARVEST":
-                        stats[p_key]["harvests"] += 1
+                    if hand_act: unit_acts.append(hand_act)
+
+                for u_act in unit_acts:
+                    if not u_act or not isinstance(u_act, list): continue
+                    u_op = u_act[0]
+                    stats[p_key]["total_actions"] += 1
+                    if u_op in productive_ops:
+                        stats[p_key]["productive_actions"] += 1
+
+                    if u_op == "HARVEST": stats[p_key]["harvests"] += 1
+                    elif u_op == "PLANT": stats[p_key]["plants"] += 1
+                    elif u_op == "WATER": stats[p_key]["waters"] += 1
+                    elif u_op == "FERTILIZE": stats[p_key]["fertilizes"] += 1
+                    elif u_op == "FEED": stats[p_key]["feeds"] += 1
+                    elif u_op == "CARE": stats[p_key]["cares"] += 1
+                    elif u_op == "DIG": stats[p_key]["digs"] += 1
+                    elif u_op == "COLLECT_FERTILIZER": stats[p_key]["fertilizer_collected"] += 1
+                    elif u_op == "BUILD_COOP": stats[p_key]["coops"] += 1
+                    elif u_op == "BUILD_PASTURE": stats[p_key]["pastures"] += 1
 
             unlocked = len(st.observation.farms[i].get("unlocked_quadrants", ["NW"]))
             stats[p_key]["quadrants"] = max(stats[p_key]["quadrants"], unlocked)
+
+        # Compute efficiency at completion
+        for p_key in ["p0", "p1"]:
+            tot = stats[p_key]["total_actions"]
+            prod = stats[p_key]["productive_actions"]
+            stats[p_key]["worker_efficiency"] = round((prod / tot * 100), 1) if tot > 0 else 0.0
 
         # Record step in replay structure (exact Kaggle schema)
         step_record = [
