@@ -97,7 +97,10 @@
 
   function loadPresetsIntoUI() {
     const presets = window.AGENT_PRESETS || {};
-    if (presets.v3) {
+    if (presets.v4) {
+      elP0Code.value = presets.v4;
+      elP0Name.value = 'Apex Grandmaster (Submission V4)';
+    } else if (presets.v3) {
       elP0Code.value = presets.v3;
       elP0Name.value = 'Submission V3 (Pure Math Solver)';
     } else if (presets.dg) {
@@ -239,7 +242,8 @@
       elFilename.textContent = '';
       if (presets[val]) {
         elCode.value = presets[val];
-        if (val === 'v3') elName.value = 'Submission V3 (Pure Math Solver)';
+        if (val === 'v4' || val === 'apex') elName.value = 'Apex Grandmaster (Submission V4)';
+        else if (val === 'v3') elName.value = 'Submission V3 (Pure Math Solver)';
         else if (val === 'dg') elName.value = 'Deep Grandmaster (2500 Rules)';
         else if (val === 'submission') elName.value = 'Kaggle Submission Agent';
         else if (val === 'rlv2') elName.value = 'RL Policy V2 (Multi-Opponent)';

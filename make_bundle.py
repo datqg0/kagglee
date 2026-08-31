@@ -23,6 +23,12 @@ def build():
         miss_py = f.read()
 
     try:
+        with open('apex_agent.py', 'r', encoding='utf-8') as f:
+            apex_py = f.read()
+    except Exception:
+        apex_py = main_py
+
+    try:
         with open('submission_v3_standalone.py', 'r', encoding='utf-8') as f:
             v3_py = f.read()
     except Exception:
@@ -117,6 +123,8 @@ def agent(obs):
 """
 
     presets = {
+        'v4': apex_py,
+        'apex': apex_py,
         'v3': v3_py,
         'dg': dg_py,
         'submission': submission_py,
