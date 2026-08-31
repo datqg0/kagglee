@@ -23,6 +23,12 @@ def build():
         miss_py = f.read()
 
     try:
+        with open('submission_v3_standalone.py', 'r', encoding='utf-8') as f:
+            v3_py = f.read()
+    except Exception:
+        v3_py = main_py
+
+    try:
         with open('rlagentv2.py', 'r', encoding='utf-8') as f:
             rlv2_py = f.read()
     except Exception:
@@ -111,6 +117,7 @@ def agent(obs):
 """
 
     presets = {
+        'v3': v3_py,
         'dg': dg_py,
         'submission': submission_py,
         'rlv2': rlv2_py,
@@ -126,7 +133,9 @@ def agent(obs):
 
     with open('engine_bundle.js', 'w', encoding='utf-8') as f:
         f.write('window.KAGGRICULTURE_ENGINE_PY = ' + json.dumps(engine_py) + ';\n')
+        f.write('window.ENGINE_PY = window.KAGGRICULTURE_ENGINE_PY;\n')
         f.write('window.KAGGRICULTURE_RUNNER_CORE_PY = ' + json.dumps(runner_py) + ';\n')
+        f.write('window.RUNNER_CORE_PY = window.KAGGRICULTURE_RUNNER_CORE_PY;\n')
         f.write('window.AGENT_PRESETS = ' + json.dumps(presets) + ';\n')
 
     print("Generated engine_bundle.js successfully with presets:", list(presets.keys()))

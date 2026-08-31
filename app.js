@@ -97,7 +97,10 @@
 
   function loadPresetsIntoUI() {
     const presets = window.AGENT_PRESETS || {};
-    if (presets.dg) {
+    if (presets.v3) {
+      elP0Code.value = presets.v3;
+      elP0Name.value = 'Submission V3 (Pure Math Solver)';
+    } else if (presets.dg) {
       elP0Code.value = presets.dg;
       elP0Name.value = 'Deep Grandmaster (2500 Rules)';
     } else if (presets.rlv2) {
@@ -236,7 +239,8 @@
       elFilename.textContent = '';
       if (presets[val]) {
         elCode.value = presets[val];
-        if (val === 'dg') elName.value = 'Deep Grandmaster (2500 Rules)';
+        if (val === 'v3') elName.value = 'Submission V3 (Pure Math Solver)';
+        else if (val === 'dg') elName.value = 'Deep Grandmaster (2500 Rules)';
         else if (val === 'submission') elName.value = 'Kaggle Submission Agent';
         else if (val === 'rlv2') elName.value = 'RL Policy V2 (Multi-Opponent)';
         else if (val === 'miss') elName.value = 'Neuro-Symbolic Agent (1000 Rules + RL)';
@@ -345,8 +349,8 @@
 
     simWorker.postMessage({
       type: 'RUN_MATCH',
-      enginePy: window.KAGGRICULTURE_ENGINE_PY || '',
-      runnerPy: window.RUNNER_CORE_PY || '',
+      enginePy: window.KAGGRICULTURE_ENGINE_PY || window.ENGINE_PY || '',
+      runnerPy: window.KAGGRICULTURE_RUNNER_CORE_PY || window.RUNNER_CORE_PY || '',
       agent0Code,
       agent1Code,
       agent0Name: p0Name,

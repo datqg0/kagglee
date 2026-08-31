@@ -23,27 +23,27 @@ async function initPyodide(engineCode, runnerCode) {
     } catch (e) {
       console.warn("NumPy preloading warning:", e);
     }
-    
-    self.postMessage({ type: 'STATUS', message: '🌾 Setting up Kaggriculture Simulation Engine...' });
-    
-    // Write engine and runner files into virtual filesystem
-    if (enginePyCode) {
-      pyodide.FS.writeFile('kaggriculture_engine.py', enginePyCode);
-    }
-    if (runnerCorePyCode) {
-      pyodide.FS.writeFile('runner_core.py', runnerCorePyCode);
-    }
-    
-    await pyodide.runPythonAsync(`
+  }
+
+  self.postMessage({ type: 'STATUS', message: '🌾 Setting up Kaggriculture Simulation Engine...' });
+  
+  // Write engine and runner files into virtual filesystem
+  if (enginePyCode) {
+    pyodide.FS.writeFile('kaggriculture_engine.py', enginePyCode);
+  }
+  if (runnerCorePyCode) {
+    pyodide.FS.writeFile('runner_core.py', runnerCorePyCode);
+  }
+  
+  await pyodide.runPythonAsync(`
 import sys
 import runner_core
 import kaggriculture_engine
 print("Kaggriculture Simulation Worker initialized successfully!")
-    `);
-    
-    engineReady = true;
-    self.postMessage({ type: 'READY' });
-  }
+  `);
+  
+  engineReady = true;
+  self.postMessage({ type: 'READY' });
 }
 
 self.onmessage = async function(e) {
@@ -57,8 +57,14 @@ self.onmessage = async function(e) {
     }
   } else if (data.type === 'RUN_MATCH') {
     try {
-      if (!engineReady) {
-        await initPyodide(data.enginePy, data.runnerPy);
+      if (data.enginePy) enginePyCode = data.enginePy;
+      if (data.runnerPy) runnerCorePyCode = data.runnerPy;
+
+      if (!engineReady || !pyodide) {
+        await initPyodide(enginePyCode, runnerCorePyCode);
+      } else {
+        if (enginePyCode) pyodide.FS.writeFile('kaggriculture_engine.py', enginePyCode);
+        if (runnerCorePyCode) pyodide.FS.writeFile('runner_core.py', runnerCorePyCode);
       }
       
       const { agent0Code, agent1Code, agent0Name, agent1Name, seed, episodeSteps, startingMoney, boardSize } = data;
@@ -118,15 +124,14 @@ result_json = json.dumps(result)
       `);
       
       const resultJson = pyodide.globals.get('result_json');
-      const parsed = JSON.parse(resultJson);
+      const parsedResult = JSON.parse(resultJson);
       
       self.postMessage({
-        type: 'MATCH_COMPLETE',
-        result: parsed
+        type: 'COMPLETE',
+        result: parsedResult
       });
       
     } catch (err) {
-      console.error("Match error in worker:", err);
       self.postMessage({
         type: 'ERROR',
         error: err.message || String(err)
