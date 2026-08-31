@@ -99,37 +99,40 @@
     const presets = window.AGENT_PRESETS || {};
     if (presets.v4) {
       elP0Code.value = presets.v4;
-      elP0Name.value = 'Apex Grandmaster (Submission V4)';
+      elP0Name.value = 'Apex V4 (Grandmaster)';
     } else if (presets.v3) {
       elP0Code.value = presets.v3;
-      elP0Name.value = 'Submission V3 (Pure Math Solver)';
+      elP0Name.value = 'Submission V3';
     } else if (presets.dg) {
       elP0Code.value = presets.dg;
-      elP0Name.value = 'Deep Grandmaster (2500 Rules)';
+      elP0Name.value = 'DG Agent';
     } else if (presets.rlv2) {
       elP0Code.value = presets.rlv2;
-      elP0Name.value = 'RL Policy V2 (Multi-Opponent)';
+      elP0Name.value = 'RL Policy V2';
     } else if (presets.miss) {
       elP0Code.value = presets.miss;
-      elP0Name.value = 'Neuro-Symbolic Agent (1000 Rules + RL)';
+      elP0Name.value = 'Miss Agent';
     } else if (presets.edf) {
       elP0Code.value = presets.edf;
-      elP0Name.value = 'Expert Framework (1000 Rules)';
+      elP0Name.value = 'EDF Agent';
     } else if (presets.rl) {
       elP0Code.value = presets.rl;
-      elP0Name.value = 'Hierarchical RL Agent (Top $95k)';
+      elP0Name.value = 'RL Agent';
     } else if (presets.main) {
       elP0Code.value = presets.main;
     }
-    if (presets.submission) {
+    if (presets.v3) {
+      elP1Code.value = presets.v3;
+      elP1Name.value = 'Submission V3';
+    } else if (presets.submission) {
       elP1Code.value = presets.submission;
-      elP1Name.value = 'Kaggle Submission Agent';
+      elP1Name.value = 'Baseline';
     } else if (presets.miss) {
       elP1Code.value = presets.miss;
-      elP1Name.value = 'Neuro-Symbolic Agent (1000 Rules + RL)';
+      elP1Name.value = 'Miss Agent';
     } else if (presets.rlv2) {
       elP1Code.value = presets.rlv2;
-      elP1Name.value = 'RL Policy V2 (Multi-Opponent)';
+      elP1Name.value = 'RL Policy V2';
     } else if (presets.main) {
       elP1Code.value = presets.main;
       elP1Name.value = 'Grandmaster Agent';
@@ -242,19 +245,19 @@
       elFilename.textContent = '';
       if (presets[val]) {
         elCode.value = presets[val];
-        if (val === 'v4' || val === 'apex') elName.value = 'Apex Grandmaster (Submission V4)';
-        else if (val === 'v3') elName.value = 'Submission V3 (Pure Math Solver)';
-        else if (val === 'dg') elName.value = 'Deep Grandmaster (2500 Rules)';
-        else if (val === 'submission') elName.value = 'Kaggle Submission Agent';
-        else if (val === 'rlv2') elName.value = 'RL Policy V2 (Multi-Opponent)';
-        else if (val === 'miss') elName.value = 'Neuro-Symbolic Agent (1000 Rules + RL)';
-        else if (val === 'edf') elName.value = 'Expert Framework (1000 Rules)';
-        else if (val === 'rl') elName.value = 'Hierarchical RL Agent (Top $95k)';
-        else if (val === 'main') elName.value = 'Grandmaster Agent';
-        else if (val === 'abc') elName.value = 'Adaptive Liquidation Agent';
-        else if (val === 'starter') elName.value = 'Starter Baseline';
-        else if (val === 'random') elName.value = 'Random Explorer';
-        else if (val === 'pass') elName.value = 'Pass Agent';
+        if (val === 'v4' || val === 'apex') elName.value = 'Apex V4 (Grandmaster)';
+        else if (val === 'v3') elName.value = 'Submission V3';
+        else if (val === 'dg') elName.value = 'DG Agent';
+        else if (val === 'submission') elName.value = 'Baseline';
+        else if (val === 'rlv2') elName.value = 'RL Policy V2';
+        else if (val === 'miss') elName.value = 'Miss Agent';
+        else if (val === 'edf') elName.value = 'EDF Agent';
+        else if (val === 'rl') elName.value = 'RL Agent';
+        else if (val === 'main') elName.value = 'Grandmaster';
+        else if (val === 'abc') elName.value = 'ABC Agent';
+        else if (val === 'starter') elName.value = 'Starter';
+        else if (val === 'random') elName.value = 'Random';
+        else if (val === 'pass') elName.value = 'Pass';
       }
     }
   }
