@@ -453,28 +453,70 @@
     elStatP1Errors.textContent = p1.errors.length > 0 ? `${p1.errors.length} error(s)` : '0';
 
     // Draw Wealth Timeline
-    drawWealthChart(summary.timeline, p0.name, p1.name);
+    requestAnimationFrame(() => {
+      drawWealthChart(summary.timeline, p0.name, p1.name);
+    });
+  }
+
+  function extractTimelineFromReplay(replay) {
+    if (!replay || !replay.steps || replay.steps.length === 0) return [];
+    const timeline = [];
+    const steps = replay.steps;
+    const totalSteps = steps.length;
+    for (let s = 0; s < totalSteps; s += 24) {
+      const stepData = steps[s];
+      const day = Math.floor(s / 24);
+      let m0 = 3000, m1 = 3000;
+      if (stepData && stepData[0] && stepData[0].observation && stepData[0].observation.farms) {
+        m0 = stepData[0].observation.farms[0]?.money ?? 3000;
+        m1 = stepData[0].observation.farms[1]?.money ?? 3000;
+      }
+      timeline.push({ day, p0_money: Math.round(m0), p1_money: Math.round(m1) });
+    }
+    // Add final step if not on boundary
+    if (totalSteps > 0 && (totalSteps - 1) % 24 !== 0) {
+      const lastStep = steps[totalSteps - 1];
+      const day = Math.floor((totalSteps - 1) / 24);
+      let m0 = 3000, m1 = 3000;
+      if (lastStep && lastStep[0] && lastStep[0].observation && lastStep[0].observation.farms) {
+        m0 = lastStep[0].observation.farms[0]?.money ?? 3000;
+        m1 = lastStep[0].observation.farms[1]?.money ?? 3000;
+      }
+      timeline.push({ day, p0_money: Math.round(m0), p1_money: Math.round(m1) });
+    }
+    return timeline;
   }
 
   function drawWealthChart(timeline, p0Name, p1Name) {
-    if (!wealthCanvas || !timeline || timeline.length === 0) return;
+    if (!wealthCanvas) return;
+    if (!timeline || timeline.length === 0) {
+      timeline = extractTimelineFromReplay(currentReplay);
+    }
+    if (!timeline || timeline.length === 0) return;
+
+    const rect = wealthCanvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    const displayWidth = rect.width > 0 ? rect.width : 700;
+    const displayHeight = rect.height > 0 ? rect.height : 260;
+
+    wealthCanvas.width = displayWidth * dpr;
+    wealthCanvas.height = displayHeight * dpr;
+
     const ctx = wealthCanvas.getContext('2d');
-    const width = wealthCanvas.width;
-    const height = wealthCanvas.height;
+    ctx.scale(dpr, dpr);
+    ctx.clearRect(0, 0, displayWidth, displayHeight);
 
-    ctx.clearRect(0, 0, width, height);
+    const padding = { top: 25, right: 25, bottom: 35, left: 55 };
+    const chartW = displayWidth - padding.left - padding.right;
+    const chartH = displayHeight - padding.top - padding.bottom;
 
-    const padding = { top: 30, right: 30, bottom: 40, left: 60 };
-    const chartW = width - padding.left - padding.right;
-    const chartH = height - padding.top - padding.bottom;
-
-    // Find max money
+    // Find max money with nice ceiling
     let maxMoney = 3000;
     timeline.forEach(pt => {
       if (pt.p0_money > maxMoney) maxMoney = pt.p0_money;
       if (pt.p1_money > maxMoney) maxMoney = pt.p1_money;
     });
-    maxMoney = Math.ceil(maxMoney * 1.1 / 1000) * 1000; // Round up nice
+    maxMoney = Math.ceil(maxMoney * 1.15 / 1000) * 1000;
 
     // Draw Grid Lines & Y Axis
     ctx.strokeStyle = 'rgba(240, 246, 252, 0.08)';
@@ -496,36 +538,58 @@
     // Draw X Axis (Days)
     ctx.textAlign = 'center';
     const numPoints = timeline.length;
-    const stepX = chartW / (numPoints - 1);
+    const stepX = chartW / Math.max(1, numPoints - 1);
 
-    for (let i = 0; i < numPoints; i += 5) {
+    for (let i = 0; i < numPoints; i += Math.max(1, Math.floor(numPoints / 6))) {
       const x = padding.left + i * stepX;
-      ctx.fillText(`D${timeline[i].day + 1}`, x, height - 15);
+      ctx.fillText(`D${timeline[i].day + 1}`, x, displayHeight - 12);
     }
 
-    // Draw Line helper
-    function drawLine(key, color, glowColor) {
+    // Draw Curve with Area Gradient
+    function drawLine(key, color, glowColor, gradientStart) {
+      if (numPoints <= 0) return;
       ctx.save();
+
+      // Area fill gradient
+      const grad = ctx.createLinearGradient(0, padding.top, 0, padding.top + chartH);
+      grad.addColorStop(0, gradientStart);
+      grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+      ctx.beginPath();
+      timeline.forEach((pt, idx) => {
+        const x = padding.left + idx * stepX;
+        const y = padding.top + chartH - ((pt[key] || 0) / maxMoney) * chartH;
+        if (idx === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.lineTo(padding.left + (numPoints - 1) * stepX, padding.top + chartH);
+      ctx.lineTo(padding.left, padding.top + chartH);
+      ctx.closePath();
+      ctx.fillStyle = grad;
+      ctx.fill();
+
+      // Line stroke
       ctx.strokeStyle = color;
       ctx.lineWidth = 2.5;
       ctx.shadowColor = glowColor;
-      ctx.shadowBlur = 10;
+      ctx.shadowBlur = 8;
       ctx.beginPath();
 
       timeline.forEach((pt, idx) => {
         const x = padding.left + idx * stepX;
-        const y = padding.top + chartH - (pt[key] / maxMoney) * chartH;
+        const y = padding.top + chartH - ((pt[key] || 0) / maxMoney) * chartH;
         if (idx === 0) ctx.moveTo(x, y);
         else ctx.lineTo(x, y);
       });
       ctx.stroke();
 
-      // Points
+      // Key Points
       ctx.fillStyle = color;
+      ctx.shadowBlur = 0;
       timeline.forEach((pt, idx) => {
         if (idx % 5 === 0 || idx === numPoints - 1) {
           const x = padding.left + idx * stepX;
-          const y = padding.top + chartH - (pt[key] / maxMoney) * chartH;
+          const y = padding.top + chartH - ((pt[key] || 0) / maxMoney) * chartH;
           ctx.beginPath();
           ctx.arc(x, y, 4, 0, Math.PI * 2);
           ctx.fill();
@@ -535,9 +599,16 @@
     }
 
     // Draw P0 (Blue) and P1 (Red)
-    drawLine('p0_money', '#388bfd', 'rgba(56, 139, 253, 0.4)');
-    drawLine('p1_money', '#f85149', 'rgba(248, 81, 73, 0.4)');
+    drawLine('p0_money', '#388bfd', 'rgba(56, 139, 253, 0.5)', 'rgba(56, 139, 253, 0.25)');
+    drawLine('p1_money', '#f85149', 'rgba(248, 81, 73, 0.5)', 'rgba(248, 81, 73, 0.25)');
   }
+
+  // Redraw chart on window resize
+  window.addEventListener('resize', () => {
+    if (currentSummary && elResultsCard.style.display !== 'none') {
+      drawWealthChart(currentSummary.timeline, currentSummary.agent0?.name, currentSummary.agent1?.name);
+    }
+  });
 
   function buildKagglePayload(replayData) {
     if (replayData && replayData.environment) {
