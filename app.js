@@ -154,7 +154,7 @@
           updateStatus('Python Engine Ready', 'ready');
         } else if (msg.type === 'PROGRESS') {
           handleProgressUpdate(msg);
-        } else if (msg.type === 'MATCH_COMPLETE') {
+        } else if (msg.type === 'MATCH_COMPLETE' || msg.type === 'COMPLETE') {
           handleMatchComplete(msg.result);
         } else if (msg.type === 'ERROR') {
           handleMatchError(msg.error);
@@ -640,6 +640,8 @@
   }
 
   // --- VISUALIZER RENDERER ---
+  let currentIframeBlobUrl = null;
+
   function renderVisualizer(replayData) {
     if (!elVisIframe || !replayData) return;
 
@@ -653,7 +655,13 @@
     const kaggleObj = buildKagglePayload(replayData);
     const fullHtml = header + `\n<script>window.kaggle = ${JSON.stringify(kaggleObj)};</script>\n` + footer;
 
-    elVisIframe.srcdoc = fullHtml;
+    // Use Blob URL for instant streaming load to eliminate main thread freeze
+    if (currentIframeBlobUrl) {
+      URL.revokeObjectURL(currentIframeBlobUrl);
+    }
+    const blob = new Blob([fullHtml], { type: 'text/html;charset=utf-8' });
+    currentIframeBlobUrl = URL.createObjectURL(blob);
+    elVisIframe.src = currentIframeBlobUrl;
   }
 
   // --- REPLAY EXPORT & IMPORT ---

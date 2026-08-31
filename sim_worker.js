@@ -127,7 +127,7 @@ result_json = json.dumps(result)
       const parsedResult = JSON.parse(resultJson);
       
       self.postMessage({
-        type: 'COMPLETE',
+        type: 'MATCH_COMPLETE',
         result: parsedResult
       });
       
