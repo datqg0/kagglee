@@ -280,6 +280,7 @@ def run_match_simulation(
     }
 
     env = MockEnv(cfg)
+    env.info["seed"] = seed
     
     # Initialize game state
     state = [

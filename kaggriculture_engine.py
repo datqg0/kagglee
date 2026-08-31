@@ -3,10 +3,16 @@ import math
 import random
 from os import path
 
-def resolve_episode_seed(seed):
-    if seed is None:
-        return random.randint(0, 2**31 - 1)
-    return seed
+def resolve_episode_seed(env_or_seed):
+    if isinstance(env_or_seed, (int, float)):
+        return int(env_or_seed)
+    if hasattr(env_or_seed, "configuration"):
+        s = get(env_or_seed.configuration, "seed", None)
+        if s is not None:
+            return int(s)
+    if hasattr(env_or_seed, "info") and isinstance(env_or_seed.info, dict) and "seed" in env_or_seed.info:
+        return int(env_or_seed.info["seed"])
+    return random.randint(0, 2**31 - 1)
 
 dirpath = path.dirname(__file__)
 
@@ -250,6 +256,8 @@ def _initialize(state, env):
     obs0 = state[0].observation
 
     seed = resolve_episode_seed(env)
+    if hasattr(env, "info") and isinstance(env.info, dict):
+        env.info["seed"] = seed
 
     board_size = int(get(configuration, "boardSize", 10))
     starting_money = int(get(configuration, "startingMoney", 3000))

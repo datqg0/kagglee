@@ -189,8 +189,16 @@
   // --- PRESET & UPLOAD HANDLERS ---
   function setupEventListeners() {
     // Random Seed
-    elBtnRandomSeed.addEventListener('click', () => {
-      elSeedInput.value = Math.floor(Math.random() * 90000000) + 10000000;
+    elBtnRandomSeed.addEventListener('click', (e) => {
+      e.preventDefault();
+      const newSeed = Math.floor(Math.random() * 90000000) + 10000000;
+      elSeedInput.value = newSeed;
+      elBtnRandomSeed.style.transform = 'rotate(360deg)';
+      elBtnRandomSeed.style.transition = 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
+      setTimeout(() => {
+        elBtnRandomSeed.style.transform = '';
+        elBtnRandomSeed.style.transition = '';
+      }, 300);
     });
 
     // P0 Preset change
